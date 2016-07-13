@@ -1,0 +1,101 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'findbugs'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+
+   eclipse {
+      classpath {
+         downloadSources = true
+         downloadJavadoc = true
+      }
+   }
+
+   configurations.all {
+      resolutionStrategy {
+
+         cacheDynamicVersionsFor 0, 'minutes'
+         cacheChangingModulesFor 0, 'minutes'
+
+         eachDependency { DependencyResolveDetails details ->
+            if (details.requested.name == 'slf4j-log4j12') {
+               details.useTarget group: 'org.slf4j', name: 'log4j-over-slf4j', version: '+'
+            }
+         }
+      }
+   }
+
+   repositories {
+      maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
+      jcenter()
+   }
+
+   dependencies {
+
+      compile 'ch.qos.logback:logback-classic:+'
+      compile 'ch.qos.logback:logback-core:+'
+
+      testCompile 'junit:junit:+'
+   }
+
+
+   task sourcesJar(type: Jar, dependsOn: classes) {
+     from sourceSets.main.allSource
+     classifier = 'sources'
+   }
+
+   task javadocJar(type: Jar, dependsOn:javadoc) {
+     from javadoc.destinationDir
+     classifier 'javadoc'
+   }
+
+   artifacts {
+     archives sourcesJar
+     archives javadocJar
+   }
+
+   findbugs {
+      toolVersion = "+"
+      reportsDir = file("$project.buildDir/findbugsReports")
+      effort = "max"
+      reportLevel = "low"
+      ignoreFailures = false
+      excludeFilter = file("${rootProject.projectDir}/findbugs-exclude.xml")
+   }
+
+   pmd {
+      toolVersion = "+"
+      reportsDir = file("$project.buildDir/pmdReports")
+      ruleSets = [
+         "basic",
+         "braces",
+         "naming",
+         "design",
+         "coupling",
+         "clone",
+         "codesize",
+         "finalizers",
+         "strings",
+         "typeresolution",
+         "strictexception",
+         "logging-java"
+      ]
+      ignoreFailures = false
+      sourceSets = [sourceSets.main]
+   }
+
+   tasks.withType(FindBugs) {
+      reports {
+         xml.enabled = false
+         html.enabled = true
+      }
+   }
+
+   checkstyle {
+      config = resources.text.fromFile("${rootProject.projectDir}/checkstyle/google_checks.xml")
+      configProperties = [samedir: "${rootProject.projectDir}/checkstyle"]
+      reportsDir = file("$rootProject.buildDir/checkstyleReports")
+      toolVersion = "+"
+      ignoreFailures = false
+   }
