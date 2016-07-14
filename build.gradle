@@ -39,6 +39,8 @@ apply plugin: 'pmd'
 	  compile "org.apache.beam:java-sdk-all:+"
 	  
       testCompile 'junit:junit:+'
+      testCompile "org.mockito:mockito-core:1.+"
+      
    }
 
 
