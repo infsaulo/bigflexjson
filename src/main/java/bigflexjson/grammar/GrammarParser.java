@@ -86,20 +86,6 @@ public class GrammarParser {
     }
   }
 
-  private static void validateBytesMapping(final Field field) throws IllegalStateException {
-
-    switch (field.getBqType()) {
-
-      case "STRING":
-        break;
-      case "BYTES":
-        break;
-      default:
-        throw new IllegalStateException(field.getBqType() + " cannot be type casted from BYTES");
-    }
-
-  }
-
   private static void validateTypeMapping(final Field field) throws IllegalStateException {
 
     switch (field.getSrcType()) {
@@ -111,9 +97,6 @@ public class GrammarParser {
         break;
       case "STRING":
         validateStringMapping(field);
-        break;
-      case "BYTES":
-        validateBytesMapping(field);
         break;
       default:
         throw new IllegalStateException(field.getSrcType() + " is not supported as a source type");
