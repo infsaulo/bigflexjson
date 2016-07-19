@@ -9,8 +9,8 @@ public class GrammarParseTest {
 
     final String grammarJsonRepr = "{\"fields\":["
         + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"field_1\"},"
-        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\", \"srcSerialization\":\"hex\"}"
-        + "]}";
+        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\", "
+        + "\"srcSerialization\":\"hex\"}" + "]}";
 
     GrammarParser.getGrammar(grammarJsonRepr);
 
@@ -20,8 +20,8 @@ public class GrammarParseTest {
   public void testSemanticallyIncorrectGrammarRepr() {
     final String grammarJsonRepr = "{\"fields\":["
         + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"field_1\"},"
-        + "{\"name\":\"field2\",\"srcType\":\"BYTES\",\"bqType\":\"INTEGER\", \"destName\":\"field_2\", \"srcSerialization\":\"hex\"}"
-        + "]}";
+        + "{\"name\":\"field2\",\"srcType\":\"BYTES\",\"bqType\":\"INTEGER\", \"destName\":\"field_2\", "
+        + "\"srcSerialization\":\"hex\"}" + "]}";
 
     GrammarParser.getGrammar(grammarJsonRepr);
   }
@@ -43,8 +43,8 @@ public class GrammarParseTest {
 
     final String grammarJsonRepr = "{\"fields\":["
         + "{\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"field_1\"},"
-        + "{\"name\":\"field2\",\"srcType\":\"BYTES\",\"bqType\":\"STRING\", \"destName\":\"field_2\", \"srcSerialization\":\"hex\"}"
-        + "]}";
+        + "{\"name\":\"field2\",\"srcType\":\"BYTES\",\"bqType\":\"STRING\", \"destName\":\"field_2\", "
+        + "\"srcSerialization\":\"hex\"}" + "]}";
 
     GrammarParser.getGrammar(grammarJsonRepr);
 

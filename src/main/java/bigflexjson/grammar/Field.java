@@ -1,6 +1,10 @@
 package bigflexjson.grammar;
 
-public class Field {
+import java.io.Serializable;
+
+public class Field implements Serializable {
+
+  private static final long serialVersionUID = 769620709074629987L;
 
   // Original field's name
   String name;
