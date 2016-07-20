@@ -1,5 +1,6 @@
 package bigflexjson.tableschema;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,7 +12,9 @@ import bigflexjson.grammar.BigQueryTypes;
 import bigflexjson.grammar.Field;
 import bigflexjson.grammar.Grammar;
 
-public class TableSchemaFactory {
+public class TableSchemaFactory implements Serializable {
+
+  private static final long serialVersionUID = 1465681315148137897L;
 
   public static TableSchema getTableSchema(final Grammar grammar) {
 

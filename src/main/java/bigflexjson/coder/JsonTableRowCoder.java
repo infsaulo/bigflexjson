@@ -27,6 +27,11 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
     this.grammar = grammar;
   }
 
+  public JsonTableRowCoder() {
+
+    grammar = null;
+  }
+
   @Override
   public void encode(final TableRow value, final OutputStream outStream, final Context context)
       throws CoderException, IOException {
