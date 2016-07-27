@@ -31,12 +31,22 @@ public class GrammarParser {
     }
   }
 
-  private static void validateRequiredFields(final Field field) throws NullPointerException {
+  private static void validateRequiredFields(final Field field)
+      throws NullPointerException, IllegalStateException {
 
     Preconditions.checkNotNull(field.name, "name field must be present");
     Preconditions.checkNotNull(field.destName, "destName field must be present");
     Preconditions.checkNotNull(field.srcType, "srcType field must be present");
     Preconditions.checkNotNull(field.bqType, "bqType field must be present");
+
+    if (field.srcType.equals("RECORD")) {
+      Preconditions.checkState(field.getFields().size() > 0,
+          "fields inside a record must contain at least one element");
+      for (final Field innerField : field.getFields()) {
+        validateRequiredFields(innerField);
+        validateField(innerField);
+      }
+    }
   }
 
   private static void validateField(final Field field) throws IllegalStateException {
@@ -86,6 +96,16 @@ public class GrammarParser {
     }
   }
 
+  private static void validateRecordMapping(final Field field) throws IllegalStateException {
+    switch (field.getBqType()) {
+
+      case "RECORD":
+        break;
+      default:
+        throw new IllegalStateException(field.getBqType() + " cannot be type casted from RECORD");
+    }
+  }
+
   private static void validateTypeMapping(final Field field) throws IllegalStateException {
 
     switch (field.getSrcType()) {
@@ -97,6 +117,9 @@ public class GrammarParser {
         break;
       case "STRING":
         validateStringMapping(field);
+        break;
+      case "RECORD":
+        validateRecordMapping(field);
         break;
       default:
         throw new IllegalStateException(field.getSrcType() + " is not supported as a source type");

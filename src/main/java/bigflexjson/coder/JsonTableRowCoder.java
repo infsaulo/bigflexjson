@@ -67,6 +67,9 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         case "STRING":
           fromStringType(field, inputObject, row);
           break;
+        case "RECORD":
+          fromRecordType(field, inputObject, row);
+          break;
         default:
           throw new IllegalStateException(
               field.getSrcType() + " is not supported as a source type");
@@ -121,6 +124,17 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         break;
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from STRING");
+    }
+  }
+
+  private void fromRecordType(final Field field, final JsonObject obj, final TableRow row) {
+
+    switch (field.getBqType()) {
+      case "RECORD":
+        row.set(field.getDestName(), obj.getAsJsonArray(field.getName()));
+        break;
+      default:
+        throw new IllegalStateException(field.getBqType() + " cannot be type casted from RECORD");
     }
   }
 }

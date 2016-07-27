@@ -2,7 +2,7 @@ package bigflexjson.grammar;
 
 public enum SrcTypes {
 
-  INTEGER, STRING, BYTES, DECIMAL;
+  INTEGER, STRING, BYTES, DECIMAL, RECORD;
 
   public static String[] names() {
 

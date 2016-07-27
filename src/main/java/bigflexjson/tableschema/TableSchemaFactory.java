@@ -1,6 +1,7 @@
 package bigflexjson.tableschema;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,8 +28,27 @@ public class TableSchemaFactory implements Serializable {
 
       Preconditions.checkArgument(bigQueryTypes.contains(fields.get(index).getBqType()));
 
-      fieldSchemas[index] = new TableFieldSchema().setName(fields.get(index).getDestName())
-          .setType(fields.get(index).getBqType());
+      if (fields.get(index).getBqType().equals(BigQueryTypes.RECORD.name())) {
+
+        final List<Field> innerFields = fields.get(index).getFields();
+        final List<TableFieldSchema> innerFieldsSchemaList = new ArrayList<>();
+
+        for (int innerIndex = 0; innerIndex < innerFields.size(); innerIndex++) {
+
+          innerFieldsSchemaList
+              .add(new TableFieldSchema().setName(innerFields.get(innerIndex).getDestName())
+                  .setType(innerFields.get(innerIndex).getBqType()));
+        }
+
+        fieldSchemas[index] = new TableFieldSchema().setName(fields.get(index).getDestName())
+            .setType(fields.get(index).getBqType()).setFields(innerFieldsSchemaList)
+            .setMode("REPEATED");
+
+      } else {
+
+        fieldSchemas[index] = new TableFieldSchema().setName(fields.get(index).getDestName())
+            .setType(fields.get(index).getBqType());
+      }
     }
 
     schema.setFields(Arrays.asList(fieldSchemas));

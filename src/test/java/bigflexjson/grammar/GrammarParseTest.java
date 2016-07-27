@@ -66,4 +66,18 @@ public class GrammarParseTest {
     GrammarParser.getGrammar(grammarJsonRepr);
 
   }
+
+  @Test
+  public void testRecordFieldsGrammarRepr() {
+
+    final String grammarJsonRepr = "{\"fields\":["
+        + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"field_1\"},"
+        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\", "
+        + "\"srcSerialization\":\"hex\"},"
+        + "{\"name\":\"field3\", \"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"field_3\", \"fields\": [{\"name\":\"innerfield1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"inner_field_1\"},"
+        + "{\"name\":\"innerfield2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"inner_field_2\", "
+        + "\"srcSerialization\":\"hex\"}]}]}";
+
+    GrammarParser.getGrammar(grammarJsonRepr);
+  }
 }

@@ -1,6 +1,7 @@
 package bigflexjson.grammar;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Field implements Serializable {
 
@@ -20,6 +21,9 @@ public class Field implements Serializable {
 
   // Determines the kind of serialization used in the original field.
   String srcSerialization;
+
+  // If bqType is RECORD should contains a list of Field
+  List<Field> fields;
 
   public String getName() {
 
@@ -44,5 +48,10 @@ public class Field implements Serializable {
   public String getSrcSerialization() {
 
     return srcSerialization;
+  }
+
+  public List<Field> getFields() {
+
+    return fields;
   }
 }
