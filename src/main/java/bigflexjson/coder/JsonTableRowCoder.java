@@ -139,6 +139,7 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         final List<TableRow> fields = new ArrayList<>();
         final List<Field> recordFields = field.getFields();
         final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+
         for (final JsonItem innerField : jsonFields) {
           final JsonObject jsonObject = innerField.asJsonObject();
           final TableRow innerRow = new TableRow();
@@ -153,9 +154,6 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
                   break;
                 case "STRING":
                   fromStringType(field, jsonObject, innerRow);
-                  break;
-                case "RECORD":
-                  fromRecordType(field, jsonObject, innerRow);
                   break;
                 default:
                   throw new IllegalStateException(
