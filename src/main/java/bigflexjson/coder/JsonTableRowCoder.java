@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.beam.sdk.coders.AtomicCoder;
 import org.apache.beam.sdk.coders.CoderException;
 import org.apache.beam.sdk.util.StreamUtils;
 
 import com.google.api.services.bigquery.model.TableRow;
+import com.wizzardo.tools.json.JsonArray;
+import com.wizzardo.tools.json.JsonItem;
 import com.wizzardo.tools.json.JsonObject;
 import com.wizzardo.tools.json.JsonTools;
 
@@ -131,8 +135,39 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 
     switch (field.getBqType()) {
       case "RECORD":
-        row.set(field.getDestName(), obj.getAsJsonArray(field.getName()));
+
+        final List<TableRow> fields = new ArrayList<>();
+        final List<Field> recordFields = field.getFields();
+        final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+        for (final JsonItem innerField : jsonFields) {
+          final JsonObject jsonObject = innerField.asJsonObject();
+          final TableRow innerRow = new TableRow();
+          for (final Field recordField : recordFields) {
+            if (jsonObject.containsKey(recordField.getSrcType())) {
+              switch (recordField.getSrcType()) {
+                case "INTEGER":
+                  fromIntegerType(recordField, jsonObject, innerRow);
+                  break;
+                case "DECIMAL":
+                  fromDecimalType(field, jsonObject, innerRow);
+                  break;
+                case "STRING":
+                  fromStringType(field, jsonObject, innerRow);
+                  break;
+                case "RECORD":
+                  fromRecordType(field, jsonObject, innerRow);
+                  break;
+                default:
+                  throw new IllegalStateException(
+                      field.getSrcType() + " is not supported as a source type");
+              }
+            }
+          }
+          fields.add(innerRow);
+        }
+        row.set(field.getDestName(), fields);
         break;
+
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from RECORD");
     }
