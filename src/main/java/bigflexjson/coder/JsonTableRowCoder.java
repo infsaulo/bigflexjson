@@ -61,22 +61,24 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 
     for (final Field field : grammar.getFields()) {
 
-      switch (field.getSrcType()) {
-        case "INTEGER":
-          fromIntegerType(field, inputObject, row);
-          break;
-        case "DECIMAL":
-          fromDecimalType(field, inputObject, row);
-          break;
-        case "STRING":
-          fromStringType(field, inputObject, row);
-          break;
-        case "RECORD":
-          fromRecordType(field, inputObject, row);
-          break;
-        default:
-          throw new IllegalStateException(
-              field.getSrcType() + " is not supported as a source type");
+      if (inputObject.containsKey(field.getName())) {
+        switch (field.getSrcType()) {
+          case "INTEGER":
+            fromIntegerType(field, inputObject, row);
+            break;
+          case "DECIMAL":
+            fromDecimalType(field, inputObject, row);
+            break;
+          case "STRING":
+            fromStringType(field, inputObject, row);
+            break;
+          case "RECORD":
+            fromRecordType(field, inputObject, row);
+            break;
+          default:
+            throw new IllegalStateException(
+                field.getSrcType() + " is not supported as a source type");
+        }
       }
     }
     return row;
@@ -134,6 +136,7 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
   private void fromRecordType(final Field field, final JsonObject obj, final TableRow row) {
 
     switch (field.getBqType()) {
+
       case "RECORD":
 
         final List<TableRow> fields = new ArrayList<>();
@@ -144,7 +147,7 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
           final JsonObject jsonObject = innerField.asJsonObject();
           final TableRow innerRow = new TableRow();
           for (final Field recordField : recordFields) {
-            if (jsonObject.containsKey(recordField.getSrcType())) {
+            if (jsonObject.containsKey(recordField.getName())) {
               switch (recordField.getSrcType()) {
                 case "INTEGER":
                   fromIntegerType(recordField, jsonObject, innerRow);
@@ -164,6 +167,7 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
           fields.add(innerRow);
         }
         row.set(field.getDestName(), fields);
+
         break;
 
       default:
