@@ -89,13 +89,13 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
     switch (field.getBqType()) {
 
       case "STRING":
-        row.set(field.getDestName(), String.valueOf(obj.getAsInteger(field.getName())));
+        row.set(field.getDestName(), String.valueOf(obj.getAsLong(field.getName())));
         break;
       case "INTEGER":
-        row.set(field.getDestName(), obj.getAsInteger(field.getName()));
+        row.set(field.getDestName(), obj.getAsLong(field.getName()));
         break;
       case "FLOAT":
-        row.set(field.getDestName(), (double) obj.getAsInteger(field.getName()));
+        row.set(field.getDestName(), (double) obj.getAsLong(field.getName()));
         break;
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from INTEGER");
