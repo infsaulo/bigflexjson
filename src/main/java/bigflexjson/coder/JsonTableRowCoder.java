@@ -153,10 +153,10 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
                   fromIntegerType(recordField, jsonObject, innerRow);
                   break;
                 case "DECIMAL":
-                  fromDecimalType(field, jsonObject, innerRow);
+                  fromDecimalType(recordField, jsonObject, innerRow);
                   break;
                 case "STRING":
-                  fromStringType(field, jsonObject, innerRow);
+                  fromStringType(recordField, jsonObject, innerRow);
                   break;
                 default:
                   throw new IllegalStateException(
