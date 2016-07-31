@@ -36,9 +36,15 @@ public class TableSchemaFactory implements Serializable {
 
         for (int innerIndex = 0; innerIndex < innerFields.size(); innerIndex++) {
 
-          innerFieldsSchemaList
-              .add(new TableFieldSchema().setName(innerFields.get(innerIndex).getDestName())
-                  .setType(innerFields.get(innerIndex).getBqType()));
+          final TableFieldSchema innerFieldSchema = new TableFieldSchema();
+          innerFieldSchema.setName(innerFields.get(innerIndex).getDestName())
+              .setType(innerFields.get(innerIndex).getBqType());
+
+          if (innerFields.get(innerIndex).isRepeated()) {
+            innerFieldSchema.setMode("REPEATED");
+          }
+
+          innerFieldsSchemaList.add(innerFieldSchema);
         }
 
         fieldSchema.setName(fields.get(index).getDestName()).setType(fields.get(index).getBqType())
