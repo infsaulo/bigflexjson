@@ -89,13 +89,52 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
     switch (field.getBqType()) {
 
       case "STRING":
-        row.set(field.getDestName(), String.valueOf(obj.getAsLong(field.getName())));
+        if (field.isRepeated()) {
+          final List<TableRow> fields = new ArrayList<>();
+          final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+          for (final JsonItem innerField : jsonFields) {
+            final long object = (long) innerField.get();
+            final TableRow innerRow = new TableRow();
+            innerRow.set(field.getDestName(), String.valueOf(object));
+            fields.add(innerRow);
+          }
+          row.set(field.getDestName(), fields);
+
+        } else {
+          row.set(field.getDestName(), String.valueOf(obj.getAsLong(field.getName())));
+        }
         break;
       case "INTEGER":
-        row.set(field.getDestName(), obj.getAsLong(field.getName()));
+        if (field.isRepeated()) {
+          final List<TableRow> fields = new ArrayList<>();
+          final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+          for (final JsonItem innerField : jsonFields) {
+            final long object = (long) innerField.get();
+            final TableRow innerRow = new TableRow();
+            innerRow.set(field.getDestName(), object);
+            fields.add(innerRow);
+          }
+          row.set(field.getDestName(), fields);
+
+        } else {
+          row.set(field.getDestName(), obj.getAsLong(field.getName()));
+        }
         break;
       case "FLOAT":
-        row.set(field.getDestName(), (double) obj.getAsLong(field.getName()));
+        if (field.isRepeated()) {
+          final List<TableRow> fields = new ArrayList<>();
+          final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+          for (final JsonItem innerField : jsonFields) {
+            final long object = (long) innerField.get();
+            final TableRow innerRow = new TableRow();
+            innerRow.set(field.getDestName(), (double) object);
+            fields.add(innerRow);
+          }
+          row.set(field.getDestName(), fields);
+
+        } else {
+          row.set(field.getDestName(), (double) obj.getAsLong(field.getName()));
+        }
         break;
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from INTEGER");
@@ -107,10 +146,36 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
     switch (field.getBqType()) {
 
       case "STRING":
-        row.set(field.getDestName(), String.valueOf(obj.getAsDouble(field.getName())));
+        if (field.isRepeated()) {
+          final List<TableRow> fields = new ArrayList<>();
+          final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+          for (final JsonItem innerField : jsonFields) {
+            final double object = (double) innerField.get();
+            final TableRow innerRow = new TableRow();
+            innerRow.set(field.getDestName(), String.valueOf(object));
+            fields.add(innerRow);
+          }
+          row.set(field.getDestName(), fields);
+
+        } else {
+          row.set(field.getDestName(), String.valueOf(obj.getAsDouble(field.getName())));
+        }
         break;
       case "FLOAT":
-        row.set(field.getDestName(), obj.getAsDouble(field.getName()));
+        if (field.isRepeated()) {
+          final List<TableRow> fields = new ArrayList<>();
+          final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+          for (final JsonItem innerField : jsonFields) {
+            final double object = (double) innerField.get();
+            final TableRow innerRow = new TableRow();
+            innerRow.set(field.getDestName(), object);
+            fields.add(innerRow);
+          }
+          row.set(field.getDestName(), fields);
+
+        } else {
+          row.set(field.getDestName(), obj.getAsDouble(field.getName()));
+        }
         break;
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from DECIMAL");
@@ -122,11 +187,38 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
     switch (field.getBqType()) {
 
       case "STRING":
-        row.set(field.getDestName(), obj.getAsString(field.getName()));
+        if (field.isRepeated()) {
+          final List<TableRow> fields = new ArrayList<>();
+          final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+          for (final JsonItem innerField : jsonFields) {
+            final String object = (String) innerField.get();
+            final TableRow innerRow = new TableRow();
+            innerRow.set(field.getDestName(), object);
+            fields.add(innerRow);
+          }
+          row.set(field.getDestName(), fields);
+
+        } else {
+          row.set(field.getDestName(), obj.getAsString(field.getName()));
+        }
         break;
       case "BYTES":
-        row.set(field.getDestName(), obj.getAsString(field.getName())
-            .getBytes(Charset.forName(field.getSrcSerialization())));
+        if (field.isRepeated()) {
+          final List<TableRow> fields = new ArrayList<>();
+          final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+          for (final JsonItem innerField : jsonFields) {
+            final byte[] object =
+                ((String) innerField.get()).getBytes(Charset.forName(field.getSrcSerialization()));
+            final TableRow innerRow = new TableRow();
+            innerRow.set(field.getDestName(), object);
+            fields.add(innerRow);
+          }
+          row.set(field.getDestName(), fields);
+
+        } else {
+          row.set(field.getDestName(), obj.getAsString(field.getName())
+              .getBytes(Charset.forName(field.getSrcSerialization())));
+        }
         break;
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from STRING");

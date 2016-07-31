@@ -22,6 +22,9 @@ public class Field implements Serializable {
   // Determines the kind of serialization used in the original field.
   String srcSerialization;
 
+  // Indicates if Field should be BigQuery's Repeated
+  boolean isRepeated;
+
   // If bqType is RECORD should contains a list of Field
   List<Field> fields;
 
@@ -48,6 +51,10 @@ public class Field implements Serializable {
   public String getSrcSerialization() {
 
     return srcSerialization;
+  }
+
+  public boolean isRepeated() {
+    return isRepeated;
   }
 
   public List<Field> getFields() {

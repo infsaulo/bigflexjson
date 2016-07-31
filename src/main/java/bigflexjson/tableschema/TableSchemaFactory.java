@@ -27,6 +27,7 @@ public class TableSchemaFactory implements Serializable {
     for (int index = 0; index < fields.size(); index++) {
 
       Preconditions.checkArgument(bigQueryTypes.contains(fields.get(index).getBqType()));
+      final TableFieldSchema fieldSchema = new TableFieldSchema();
 
       if (fields.get(index).getBqType().equals(BigQueryTypes.RECORD.name())) {
 
@@ -40,15 +41,19 @@ public class TableSchemaFactory implements Serializable {
                   .setType(innerFields.get(innerIndex).getBqType()));
         }
 
-        fieldSchemas[index] = new TableFieldSchema().setName(fields.get(index).getDestName())
-            .setType(fields.get(index).getBqType()).setFields(innerFieldsSchemaList)
-            .setMode("REPEATED");
+        fieldSchema.setName(fields.get(index).getDestName()).setType(fields.get(index).getBqType())
+            .setFields(innerFieldsSchemaList);
 
       } else {
 
-        fieldSchemas[index] = new TableFieldSchema().setName(fields.get(index).getDestName())
-            .setType(fields.get(index).getBqType());
+        fieldSchema.setName(fields.get(index).getDestName()).setType(fields.get(index).getBqType());
       }
+
+      if (fields.get(index).isRepeated()) {
+        fieldSchema.setMode("REPEATED");
+      }
+
+      fieldSchemas[index] = fieldSchema;
     }
 
     schema.setFields(Arrays.asList(fieldSchemas));

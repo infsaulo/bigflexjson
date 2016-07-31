@@ -68,6 +68,30 @@ public class JsonTableRowCoderTest {
   }
 
   @Test
+  public void testRepeatedFieldTableRowCoder() throws CoderException, IOException {
+
+    final String grammarRepr = "{\"fields\":["
+        + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"STRING\", \"destName\":\"field_1\", "
+        + "\"isRepeated\": true},"
+        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\"}"
+        + "]}";
+
+    final Grammar grammar = GrammarParser.getGrammar(grammarRepr);
+
+    final String jsonObjStr = "{\"field1\":[42,23,12], \"field2\": \"abgef102\"}";
+    final InputStream jsonObjInputStream =
+        new ByteArrayInputStream(jsonObjStr.getBytes(StandardCharsets.UTF_8));
+
+    final JsonTableRowCoder coder = new JsonTableRowCoder(grammar);
+
+    final TableRow row = coder.decode(jsonObjInputStream, context);
+    Assert.assertTrue(((List<TableRow>) row.get("field_1")).get(0).get("field_1").equals("42"));
+    Assert.assertTrue(((List<TableRow>) row.get("field_1")).get(1).get("field_1").equals("23"));
+    Assert.assertTrue(((List<TableRow>) row.get("field_1")).get(2).get("field_1").equals("12"));
+    Assert.assertTrue(((List<TableRow>) row.get("field_1")).size() == 3);
+  }
+
+  @Test
   public void testTxJsonTableRowCoder() throws CoderException, IOException {
     final String grammarRepr = "{" + "fields:[" + "{" + "name:\"hash\"," + "srcType:\"STRING\","
         + "bqType:\"STRING\"," + "destName:\"hash\"" + "}," + "{" + "name:\"version\","
