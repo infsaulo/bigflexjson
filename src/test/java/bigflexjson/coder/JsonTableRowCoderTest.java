@@ -49,13 +49,13 @@ public class JsonTableRowCoderTest {
     final String grammarRepr = "{\"fields\":["
         + "{\"name\":\"objs\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"objs\", \"fields\":["
         + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"STRING\", \"destName\":\"field_1\"},"
-        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\"}"
+        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\", \"isRepeated\":true}"
         + "]}]}";
 
     final Grammar grammar = GrammarParser.getGrammar(grammarRepr);
 
     final String jsonObjStr =
-        "{\"objs\":[{\"field1\":42,\"field2\":\"12\"},{\"field1\":13,\"field2\":\"testObj\"}]}";
+        "{\"objs\":[{\"field1\":42,\"field2\":[\"12\"]},{\"field1\":13,\"field2\":[\"testObj\", \"testObj2\"]}]}";
 
     final InputStream jsonObjInputStream =
         new ByteArrayInputStream(jsonObjStr.getBytes(StandardCharsets.UTF_8));
@@ -65,6 +65,10 @@ public class JsonTableRowCoderTest {
     final TableRow row = coder.decode(jsonObjInputStream, context);
 
     Assert.assertTrue(((List<Object>) row.get("objs")).size() == 2);
+
+    final List<TableRow> list = (List<TableRow>) row.get("objs");
+    final List<String> field2 = (List<String>) list.get(0).get("field_2");
+    Assert.assertTrue(field2.get(0).equals("12"));
   }
 
   @Test
@@ -85,10 +89,10 @@ public class JsonTableRowCoderTest {
     final JsonTableRowCoder coder = new JsonTableRowCoder(grammar);
 
     final TableRow row = coder.decode(jsonObjInputStream, context);
-    Assert.assertTrue(((List<TableRow>) row.get("field_1")).get(0).get("field_1").equals("42"));
-    Assert.assertTrue(((List<TableRow>) row.get("field_1")).get(1).get("field_1").equals("23"));
-    Assert.assertTrue(((List<TableRow>) row.get("field_1")).get(2).get("field_1").equals("12"));
-    Assert.assertTrue(((List<TableRow>) row.get("field_1")).size() == 3);
+    Assert.assertTrue(((List<String>) row.get("field_1")).get(0).equals("42"));
+    Assert.assertTrue(((List<String>) row.get("field_1")).get(1).equals("23"));
+    Assert.assertTrue(((List<String>) row.get("field_1")).get(2).equals("12"));
+    Assert.assertTrue(((List<String>) row.get("field_1")).size() == 3);
   }
 
   @Test

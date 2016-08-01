@@ -90,13 +90,11 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 
       case "STRING":
         if (field.isRepeated()) {
-          final List<TableRow> fields = new ArrayList<>();
+          final List<String> fields = new ArrayList<>();
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
           for (final JsonItem innerField : jsonFields) {
-            final long object = (long) innerField.get();
-            final TableRow innerRow = new TableRow();
-            innerRow.set(field.getDestName(), String.valueOf(object));
-            fields.add(innerRow);
+            final String object = String.valueOf((long) innerField.get());
+            fields.add(object);
           }
           row.set(field.getDestName(), fields);
 
@@ -106,13 +104,11 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         break;
       case "INTEGER":
         if (field.isRepeated()) {
-          final List<TableRow> fields = new ArrayList<>();
+          final List<Long> fields = new ArrayList<>();
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
           for (final JsonItem innerField : jsonFields) {
             final long object = (long) innerField.get();
-            final TableRow innerRow = new TableRow();
-            innerRow.set(field.getDestName(), object);
-            fields.add(innerRow);
+            fields.add(object);
           }
           row.set(field.getDestName(), fields);
 
@@ -122,13 +118,11 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         break;
       case "FLOAT":
         if (field.isRepeated()) {
-          final List<TableRow> fields = new ArrayList<>();
+          final List<Double> fields = new ArrayList<>();
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
           for (final JsonItem innerField : jsonFields) {
-            final long object = (long) innerField.get();
-            final TableRow innerRow = new TableRow();
-            innerRow.set(field.getDestName(), (double) object);
-            fields.add(innerRow);
+            final double object = ((long) innerField.get());
+            fields.add(object);
           }
           row.set(field.getDestName(), fields);
 
@@ -147,13 +141,11 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 
       case "STRING":
         if (field.isRepeated()) {
-          final List<TableRow> fields = new ArrayList<>();
+          final List<String> fields = new ArrayList<>();
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
           for (final JsonItem innerField : jsonFields) {
-            final double object = (double) innerField.get();
-            final TableRow innerRow = new TableRow();
-            innerRow.set(field.getDestName(), String.valueOf(object));
-            fields.add(innerRow);
+            final String object = String.valueOf((double) innerField.get());
+            fields.add(object);
           }
           row.set(field.getDestName(), fields);
 
@@ -163,13 +155,11 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         break;
       case "FLOAT":
         if (field.isRepeated()) {
-          final List<TableRow> fields = new ArrayList<>();
+          final List<Double> fields = new ArrayList<>();
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
           for (final JsonItem innerField : jsonFields) {
             final double object = (double) innerField.get();
-            final TableRow innerRow = new TableRow();
-            innerRow.set(field.getDestName(), object);
-            fields.add(innerRow);
+            fields.add(object);
           }
           row.set(field.getDestName(), fields);
 
@@ -188,13 +178,11 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 
       case "STRING":
         if (field.isRepeated()) {
-          final List<TableRow> fields = new ArrayList<>();
+          final List<String> fields = new ArrayList<>();
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
           for (final JsonItem innerField : jsonFields) {
             final String object = (String) innerField.get();
-            final TableRow innerRow = new TableRow();
-            innerRow.set(field.getDestName(), object);
-            fields.add(innerRow);
+            fields.add(object);
           }
           row.set(field.getDestName(), fields);
 
@@ -204,14 +192,12 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         break;
       case "BYTES":
         if (field.isRepeated()) {
-          final List<TableRow> fields = new ArrayList<>();
+          final List<byte[]> fields = new ArrayList<>();
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
           for (final JsonItem innerField : jsonFields) {
             final byte[] object =
                 ((String) innerField.get()).getBytes(Charset.forName(field.getSrcSerialization()));
-            final TableRow innerRow = new TableRow();
-            innerRow.set(field.getDestName(), object);
-            fields.add(innerRow);
+            fields.add(object);
           }
           row.set(field.getDestName(), fields);
 
