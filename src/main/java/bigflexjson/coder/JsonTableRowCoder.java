@@ -236,6 +236,36 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
                 case "STRING":
                   fromStringType(recordField, jsonObject, innerRow);
                   break;
+                case "RECORD":
+                  final List<TableRow> innerFields = new ArrayList<>();
+                  final List<Field> innerRecordFields = recordField.getFields();
+                  final JsonArray innerJsonFields =
+                      jsonObject.getAsJsonArray(recordField.getName());
+                  for (final JsonItem recInnerField : innerJsonFields) {
+                    final JsonObject recJsonObject = recInnerField.asJsonObject();
+                    final TableRow recInnerRow = new TableRow();
+                    for (final Field recRecordField : innerRecordFields) {
+                      if (recJsonObject.containsKey(recRecordField.getName())) {
+                        switch (recRecordField.getSrcType()) {
+                          case "INTEGER":
+                            fromIntegerType(recRecordField, recJsonObject, recInnerRow);
+                            break;
+                          case "DECIMAL":
+                            fromDecimalType(recRecordField, recJsonObject, recInnerRow);
+                            break;
+                          case "STRING":
+                            fromStringType(recRecordField, recJsonObject, recInnerRow);
+                            break;
+                          default:
+                            throw new IllegalStateException(
+                                recRecordField.getSrcType() + " is not supported as a source type");
+                        }
+                      }
+                    }
+                    innerFields.add(recInnerRow);
+                  }
+                  innerRow.set(recordField.getDestName(), innerFields);
+                  break;
                 default:
                   throw new IllegalStateException(
                       field.getSrcType() + " is not supported as a source type");

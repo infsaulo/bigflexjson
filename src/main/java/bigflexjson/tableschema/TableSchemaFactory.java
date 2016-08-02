@@ -37,9 +37,28 @@ public class TableSchemaFactory implements Serializable {
         for (int innerIndex = 0; innerIndex < innerFields.size(); innerIndex++) {
 
           final TableFieldSchema innerFieldSchema = new TableFieldSchema();
-          innerFieldSchema.setName(innerFields.get(innerIndex).getDestName())
-              .setType(innerFields.get(innerIndex).getBqType());
+          if (innerFields.get(innerIndex).getBqType().equals(BigQueryTypes.RECORD.name())) {
+            final List<Field> recInnerFields = innerFields.get(innerIndex).getFields();
+            final List<TableFieldSchema> recInnerFieldsSchemaList = new ArrayList<>();
+            for (int recInnerIndex = 0; recInnerIndex < recInnerFields.size(); recInnerIndex++) {
+              final TableFieldSchema recInnerFieldSchema = new TableFieldSchema();
+              recInnerFieldSchema.setName(recInnerFields.get(recInnerIndex).getDestName())
+                  .setType(recInnerFields.get(recInnerIndex).getBqType());
 
+              if (recInnerFields.get(recInnerIndex).isRepeated()) {
+                recInnerFieldSchema.setMode("REPEATED");
+              }
+
+              recInnerFieldsSchemaList.add(recInnerFieldSchema);
+            }
+            innerFieldSchema.setName(innerFields.get(innerIndex).getDestName())
+                .setType(innerFields.get(innerIndex).getBqType())
+                .setFields(recInnerFieldsSchemaList);
+          } else {
+            innerFieldSchema.setName(innerFields.get(innerIndex).getDestName())
+                .setType(innerFields.get(innerIndex).getBqType());
+
+          }
           if (innerFields.get(innerIndex).isRepeated()) {
             innerFieldSchema.setMode("REPEATED");
           }

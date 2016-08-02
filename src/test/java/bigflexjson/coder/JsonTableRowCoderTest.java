@@ -72,6 +72,38 @@ public class JsonTableRowCoderTest {
   }
 
   @Test
+  public void testJsonTableRowCoderWithNestedRecord() throws CoderException, IOException {
+
+    final String grammarRepr = "{\"fields\":["
+        + "{\"name\":\"field1\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"field_1\", "
+        + "\"isRepeated\": true, \"fields\":"
+        + "[{\"name\":\"field3\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"field_3\",\"isRepeated\": true, "
+        + "\"fields\":[{\"name\":\"field4\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_4\"}]}]},"
+        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\"}"
+        + "]}";
+
+    final Grammar grammar = GrammarParser.getGrammar(grammarRepr);
+
+    final String jsonObjStr =
+        "{\"field1\":[{\"field3\":[{\"field4\":\"test4\"}] },{\"field3\":[{\"field4\":\"test3\"}]}], \"field2\": \"abgef102\"}";
+    final InputStream jsonObjInputStream =
+        new ByteArrayInputStream(jsonObjStr.getBytes(StandardCharsets.UTF_8));
+
+    final JsonTableRowCoder coder = new JsonTableRowCoder(grammar);
+
+    final TableRow row = coder.decode(jsonObjInputStream, context);
+
+    final List<TableRow> field1List = (List<TableRow>) row.get("field_1");
+    Assert.assertTrue(field1List.size() == 2);
+    final List<TableRow> field30List = (List<TableRow>) field1List.get(0).get("field_3");
+    Assert.assertTrue(field30List.size() == 1);
+    Assert.assertTrue(field30List.get(0).get("field_4").equals("test4"));
+    final List<TableRow> field31List = (List<TableRow>) field1List.get(1).get("field_3");
+    Assert.assertTrue(field31List.size() == 1);
+    Assert.assertTrue(field31List.get(0).get("field_4").equals("test3"));
+  }
+
+  @Test
   public void testRepeatedFieldTableRowCoder() throws CoderException, IOException {
 
     final String grammarRepr = "{\"fields\":["
