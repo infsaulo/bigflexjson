@@ -16,6 +16,7 @@ import com.google.api.services.bigquery.model.TableSchema;
 
 import bigflexjson.grammar.Field;
 import bigflexjson.grammar.Grammar;
+import bigflexjson.grammar.GrammarParser;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TableSchemaFactoryTest {
@@ -60,6 +61,68 @@ public class TableSchemaFactoryTest {
           break;
         case "field_2":
           Assert.assertTrue(fieldSchema.getType().equals("STRING"));
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  @Test
+  public void testRecordTableSchemaFactory() {
+    final String grammarJsonRepr = "{\"fields\":["
+        + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"field_1\", \"isRepeated\": true },"
+        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\", "
+        + "\"srcSerialization\":\"hex\"},"
+        + "{\"name\":\"field3\", \"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"field_3\", \"isRepeated\": true,  \"fields\": "
+        + "[{\"name\":\"innerfield1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"inner_field_1\"},"
+        + "{\"name\":\"innerfield2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"inner_field_2\", "
+        + "\"srcSerialization\":\"hex\"},{\"name\":\"innerfield3\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"inner_field_3\", \"fields\": [{\"name\":\"innerinnerfield1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"inner_inner_field_1\", \"isRepeated\": true }]}]}]}";
+
+    final Grammar grammar = GrammarParser.getGrammar(grammarJsonRepr);
+
+    final TableSchema table = TableSchemaFactory.getTableSchema(grammar);
+
+    for (final TableFieldSchema fieldSchema : table.getFields()) {
+      final String fieldName = fieldSchema.getName();
+      switch (fieldName) {
+        case "field_1":
+          Assert.assertTrue(fieldSchema.getType().equals("INTEGER"));
+          Assert.assertTrue(fieldSchema.getMode().equals("REPEATED"));
+          break;
+        case "field_2":
+          Assert.assertTrue(fieldSchema.getType().equals("STRING"));
+          break;
+        case "field_3":
+          Assert.assertTrue(fieldSchema.getType().equals("RECORD"));
+          Assert.assertTrue(fieldSchema.getMode().equals("REPEATED"));
+          for (final TableFieldSchema innerField : fieldSchema.getFields()) {
+            final String innerFieldName = innerField.getName();
+            switch (innerFieldName) {
+              case "inner_field_1":
+                Assert.assertTrue(innerField.getType().equals("INTEGER"));
+                break;
+              case "inner_field_2":
+                Assert.assertTrue(innerField.getType().equals("STRING"));
+                break;
+              case "inner_field_3":
+                Assert.assertTrue(innerField.getType().equals("RECORD"));
+                for (final TableFieldSchema innerInnerField : innerField.getFields()) {
+                  final String innerInnerFieldName = innerInnerField.getName();
+                  switch (innerInnerFieldName) {
+                    case "inner_inner_field_1":
+                      Assert.assertTrue(innerInnerField.getType().equals("INTEGER"));
+                      Assert.assertTrue(innerInnerField.getMode().equals("REPEATED"));
+                      break;
+                    default:
+                      break;
+                  }
+                }
+                break;
+              default:
+                break;
+            }
+          }
           break;
         default:
           break;
