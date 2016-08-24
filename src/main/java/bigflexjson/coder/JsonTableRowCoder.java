@@ -216,13 +216,77 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
     switch (field.getBqType()) {
 
       case "RECORD":
+        if (field.isRepeated()) {
+          final List<TableRow> fields = new ArrayList<>();
+          final List<Field> recordFields = field.getFields();
 
-        final List<TableRow> fields = new ArrayList<>();
-        final List<Field> recordFields = field.getFields();
-        final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+          final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
 
-        for (final JsonItem innerField : jsonFields) {
-          final JsonObject jsonObject = innerField.asJsonObject();
+          for (final JsonItem innerField : jsonFields) {
+            final JsonObject jsonObject = innerField.asJsonObject();
+            final TableRow innerRow = new TableRow();
+            for (final Field recordField : recordFields) {
+              if (jsonObject.containsKey(recordField.getName())) {
+                switch (recordField.getSrcType()) {
+                  case "INTEGER":
+                    fromIntegerType(recordField, jsonObject, innerRow);
+                    break;
+                  case "DECIMAL":
+                    fromDecimalType(recordField, jsonObject, innerRow);
+                    break;
+                  case "STRING":
+                    fromStringType(recordField, jsonObject, innerRow);
+                    break;
+                  case "RECORD":
+                    final List<TableRow> innerFields = new ArrayList<>();
+                    final List<Field> innerRecordFields = recordField.getFields();
+                    final JsonArray innerJsonFields =
+                        jsonObject.getAsJsonArray(recordField.getName());
+                    for (final JsonItem recInnerField : innerJsonFields) {
+                      final JsonObject recJsonObject = recInnerField.asJsonObject();
+                      final TableRow recInnerRow = new TableRow();
+                      for (final Field recRecordField : innerRecordFields) {
+                        if (recJsonObject.containsKey(recRecordField.getName())) {
+                          switch (recRecordField.getSrcType()) {
+                            case "INTEGER":
+                              fromIntegerType(recRecordField, recJsonObject, recInnerRow);
+                              break;
+                            case "DECIMAL":
+                              fromDecimalType(recRecordField, recJsonObject, recInnerRow);
+                              break;
+                            case "STRING":
+                              fromStringType(recRecordField, recJsonObject, recInnerRow);
+                              break;
+                            case "RECORD":
+                              fromRecordType(recRecordField, recJsonObject, recInnerRow);
+                              break;
+                            default:
+                              throw new IllegalStateException(recRecordField.getSrcType()
+                                  + " is not supported as a source type");
+                          }
+                        }
+                      }
+                      innerFields.add(recInnerRow);
+                    }
+                    innerRow.set(recordField.getDestName(), innerFields);
+                    break;
+                  default:
+                    throw new IllegalStateException(
+                        field.getSrcType() + " is not supported as a source type");
+                }
+              }
+            }
+            fields.add(innerRow);
+          }
+
+          row.set(field.getDestName(), fields);
+
+        } else {
+
+          final List<Field> recordFields = field.getFields();
+
+          final JsonObject jsonObject = obj.getAsJsonObject(field.getName());
+
           final TableRow innerRow = new TableRow();
           for (final Field recordField : recordFields) {
             if (jsonObject.containsKey(recordField.getName())) {
@@ -256,6 +320,9 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
                           case "STRING":
                             fromStringType(recRecordField, recJsonObject, recInnerRow);
                             break;
+                          case "RECORD":
+                            fromRecordType(recRecordField, recJsonObject, recInnerRow);
+                            break;
                           default:
                             throw new IllegalStateException(
                                 recRecordField.getSrcType() + " is not supported as a source type");
@@ -272,12 +339,9 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
               }
             }
           }
-          fields.add(innerRow);
+          row.set(field.getDestName(), innerRow);
         }
-        row.set(field.getDestName(), fields);
-
         break;
-
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from RECORD");
     }

@@ -47,7 +47,7 @@ public class JsonTableRowCoderTest {
   @Test
   public void testJsonTableRowCoderWithRepeatedRecords() throws CoderException, IOException {
     final String grammarRepr = "{\"fields\":["
-        + "{\"name\":\"objs\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"objs\", \"fields\":["
+        + "{\"name\":\"objs\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"objs\", \"isRepeated\": true, \"fields\":["
         + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"STRING\", \"destName\":\"field_1\"},"
         + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\", \"isRepeated\":true}"
         + "]}]}";
@@ -78,14 +78,15 @@ public class JsonTableRowCoderTest {
         + "{\"name\":\"field1\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"field_1\", "
         + "\"isRepeated\": true, \"fields\":"
         + "[{\"name\":\"field3\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"field_3\",\"isRepeated\": true, "
-        + "\"fields\":[{\"name\":\"field4\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_4\"}]}]},"
+        + "\"fields\":[{\"name\":\"field4\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"field_4\", "
+        + "\"fields\":[{\"name\":\"field5\",\"srcType\":\"STRING\", \"bqType\":\"STRING\", \"destName\":\"field_5\"}]}]}]},"
         + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\"}"
         + "]}";
 
     final Grammar grammar = GrammarParser.getGrammar(grammarRepr);
 
     final String jsonObjStr =
-        "{\"field1\":[{\"field3\":[{\"field4\":\"test4\"}] },{\"field3\":[{\"field4\":\"test3\"}]}], \"field2\": \"abgef102\"}";
+        "{\"field1\":[{\"field3\":[{\"field4\":{\"field5\":\"test5\"}}] },{\"field3\":[{\"field4\":{\"field5\":\"test6\"}}]}], \"field2\": \"abgef102\"}";
     final InputStream jsonObjInputStream =
         new ByteArrayInputStream(jsonObjStr.getBytes(StandardCharsets.UTF_8));
 
@@ -97,10 +98,12 @@ public class JsonTableRowCoderTest {
     Assert.assertTrue(field1List.size() == 2);
     final List<TableRow> field30List = (List<TableRow>) field1List.get(0).get("field_3");
     Assert.assertTrue(field30List.size() == 1);
-    Assert.assertTrue(field30List.get(0).get("field_4").equals("test4"));
+    Assert
+        .assertTrue(((TableRow) field30List.get(0).get("field_4")).get("field_5").equals("test5"));
     final List<TableRow> field31List = (List<TableRow>) field1List.get(1).get("field_3");
     Assert.assertTrue(field31List.size() == 1);
-    Assert.assertTrue(field31List.get(0).get("field_4").equals("test3"));
+    Assert
+        .assertTrue(((TableRow) field31List.get(0).get("field_4")).get("field_5").equals("test6"));
   }
 
   @Test
@@ -146,29 +149,30 @@ public class JsonTableRowCoderTest {
         + "srcType:\"INTEGER\"," + "bqType:\"INTEGER\"," + "destName:\"blockPosition\"" + "}," + "{"
         + "name:\"blockTimeEpochSecond\"," + "srcType:\"INTEGER\"," + "bqType:\"INTEGER\","
         + "destName:\"blockTimeEpochSecond\"" + "}," + "{" + "name:\"outputs\","
-        + "srcType:\"RECORD\"," + "bqType:\"RECORD\"," + "destName:\"outputs\"," + "fields:[" + "{"
-        + "name:\"index\"," + "srcType:\"INTEGER\"," + "bqType:\"INTEGER\"," + "destName:\"index\""
-        + "}," + "{" + "name:\"value\"," + "srcType:\"INTEGER\"," + "bqType:\"INTEGER\","
-        + "destName:\"value\"" + "}," + "{" + "name:\"address\"," + "srcType:\"STRING\","
-        + "bqType:\"STRING\"," + "destName:\"address\"" + "}," + "{" + "name:\"scriptPubKeyHex\","
+        + "srcType:\"RECORD\"," + "bqType:\"RECORD\"," + "destName:\"outputs\","
+        + "isRepeated:true," + "fields:[" + "{" + "name:\"index\"," + "srcType:\"INTEGER\","
+        + "bqType:\"INTEGER\"," + "destName:\"index\"" + "}," + "{" + "name:\"value\","
+        + "srcType:\"INTEGER\"," + "bqType:\"INTEGER\"," + "destName:\"value\"" + "}," + "{"
+        + "name:\"address\"," + "srcType:\"STRING\"," + "bqType:\"STRING\","
+        + "destName:\"address\"" + "}," + "{" + "name:\"scriptPubKeyHex\"," + "srcType:\"STRING\","
+        + "bqType:\"STRING\"," + "destName:\"scriptPubKeyHex\"" + "}," + "{" + "name:\"type\","
+        + "srcType:\"STRING\"," + "bqType:\"STRING\"," + "destName:\"type\"" + "}," + "{"
+        + "name:\"cluster\"," + "srcType:\"STRING\"," + "bqType:\"STRING\","
+        + "destName:\"cluster\"" + "}" + "]" + "}," + "{" + "name:\"inputs\","
+        + "srcType:\"RECORD\"," + "bqType:\"RECORD\"," + "destName:\"inputs\"," + "isRepeated:true,"
+        + "fields:[" + "{" + "name:\"previousTransactionHash\"," + "srcType:\"STRING\","
+        + "bqType:\"STRING\"," + "destName:\"previousTransactionHash\"" + "}," + "{"
+        + "name:\"previousIndex\"," + "srcType:\"INTEGER\"," + "bqType:\"INTEGER\","
+        + "destName:\"previousIndex\"" + "}," + "{" + "name:\"value\"," + "srcType:\"INTEGER\","
+        + "bqType:\"INTEGER\"," + "destName:\"value\"" + "}," + "{" + "name:\"address\","
+        + "srcType:\"STRING\"," + "bqType:\"STRING\"," + "destName:\"address\"" + "}," + "{"
+        + "name:\"scriptSigHex\"," + "srcType:\"STRING\"," + "bqType:\"STRING\","
+        + "destName:\"scriptSigHex\"" + "}," + "{" + "name:\"scriptPubKeyHex\","
         + "srcType:\"STRING\"," + "bqType:\"STRING\"," + "destName:\"scriptPubKeyHex\"" + "}," + "{"
         + "name:\"type\"," + "srcType:\"STRING\"," + "bqType:\"STRING\"," + "destName:\"type\""
-        + "}," + "{" + "name:\"cluster\"," + "srcType:\"STRING\"," + "bqType:\"STRING\","
-        + "destName:\"cluster\"" + "}" + "]" + "}," + "{" + "name:\"inputs\","
-        + "srcType:\"RECORD\"," + "bqType:\"RECORD\"," + "destName:\"inputs\"," + "fields:[" + "{"
-        + "name:\"previousTransactionHash\"," + "srcType:\"STRING\"," + "bqType:\"STRING\","
-        + "destName:\"previousTransactionHash\"" + "}," + "{" + "name:\"previousIndex\","
-        + "srcType:\"INTEGER\"," + "bqType:\"INTEGER\"," + "destName:\"previousIndex\"" + "}," + "{"
-        + "name:\"value\"," + "srcType:\"INTEGER\"," + "bqType:\"INTEGER\"," + "destName:\"value\""
-        + "}," + "{" + "name:\"address\"," + "srcType:\"STRING\"," + "bqType:\"STRING\","
-        + "destName:\"address\"" + "}," + "{" + "name:\"scriptSigHex\"," + "srcType:\"STRING\","
-        + "bqType:\"STRING\"," + "destName:\"scriptSigHex\"" + "}," + "{"
-        + "name:\"scriptPubKeyHex\"," + "srcType:\"STRING\"," + "bqType:\"STRING\","
-        + "destName:\"scriptPubKeyHex\"" + "}," + "{" + "name:\"type\"," + "srcType:\"STRING\","
-        + "bqType:\"STRING\"," + "destName:\"type\"" + "}," + "{" + "name:\"sigHashType\","
-        + "srcType:\"STRING\"," + "bqType:\"STRING\"," + "destName:\"sigHashType\"" + "}," + "{"
-        + "name:\"cluster\"," + "srcType:\"STRING\"," + "bqType:\"STRING\","
-        + "destName:\"cluster\"" + "}" + "]" + "}" + "]" + "}";
+        + "}," + "{" + "name:\"sigHashType\"," + "srcType:\"STRING\"," + "bqType:\"STRING\","
+        + "destName:\"sigHashType\"" + "}," + "{" + "name:\"cluster\"," + "srcType:\"STRING\","
+        + "bqType:\"STRING\"," + "destName:\"cluster\"" + "}" + "]" + "}" + "]" + "}";
 
     final Grammar grammar = GrammarParser.getGrammar(grammarRepr);
 
