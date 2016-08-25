@@ -10,7 +10,11 @@ public class GrammarParseTest {
     final String grammarJsonRepr = "{\"fields\":["
         + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"field_1\"},"
         + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\", "
-        + "\"srcSerialization\":\"hex\"}" + "]}";
+        + "\"srcSerialization\":\"hex\"}, "
+        + "{\"name\":\"field3\",\"srcType\":\"INTEGER\",\"bqType\":\"TIMESTAMP\", \"destName\":\"field_3\"},"
+        + "{\"name\":\"field4\",\"srcType\":\"DECIMAL\",\"bqType\":\"TIMESTAMP\", \"destName\":\"field_4\"},"
+        + "{\"name\":\"field5\",\"srcType\":\"STRING\",\"bqType\":\"TIMESTAMP\", \"destName\":\"field_5\"},"
+        + "]}";
 
     GrammarParser.getGrammar(grammarJsonRepr);
 

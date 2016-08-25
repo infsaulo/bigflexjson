@@ -103,6 +103,7 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         }
         break;
       case "INTEGER":
+      case "TIMESTAMP":
         if (field.isRepeated()) {
           final List<Long> fields = new ArrayList<>();
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
@@ -167,6 +168,20 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
           row.set(field.getDestName(), obj.getAsDouble(field.getName()));
         }
         break;
+      case "TIMESTAMP":
+        if (field.isRepeated()) {
+          final List<Double> fields = new ArrayList<>();
+          final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
+          for (final JsonItem innerField : jsonFields) {
+            final double object = (double) innerField.get();
+            fields.add(object);
+          }
+          row.set(field.getDestName(), fields);
+
+        } else {
+          row.set(field.getDestName(), obj.getAsLong(field.getName()));
+        }
+        break;
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from DECIMAL");
     }
@@ -177,6 +192,7 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
     switch (field.getBqType()) {
 
       case "STRING":
+      case "TIMESTAMP":
         if (field.isRepeated()) {
           final List<String> fields = new ArrayList<>();
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());

@@ -64,6 +64,8 @@ public class GrammarParser {
         break;
       case "FLOAT":
         break;
+      case "TIMESTAMP":
+        break;
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from INTEGER");
     }
@@ -78,6 +80,8 @@ public class GrammarParser {
         break;
       case "FLOAT":
         break;
+      case "TIMESTAMP":
+        break;
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from DECIMAL");
     }
@@ -90,6 +94,8 @@ public class GrammarParser {
       case "STRING":
         break;
       case "BYTES":
+        break;
+      case "TIMESTAMP":
         break;
       default:
         throw new IllegalStateException(field.getBqType() + " cannot be type casted from STRING");

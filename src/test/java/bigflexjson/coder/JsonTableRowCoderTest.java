@@ -45,6 +45,28 @@ public class JsonTableRowCoderTest {
   }
 
   @Test
+  public void testTimestampJsonTableRowCoder() throws CoderException, IOException {
+
+    final String grammarRepr = "{\"fields\":["
+        + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"TIMESTAMP\", \"destName\":\"field_1\"},"
+        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"TIMESTAMP\", \"destName\":\"field_2\"}"
+        + "]}";
+
+    final Grammar grammar = GrammarParser.getGrammar(grammarRepr);
+
+    final String jsonObjStr = "{\"field1\":1471910400, \"field2\": \"2014-08-19 07:41:35.220\"}";
+    final InputStream jsonObjInputStream =
+        new ByteArrayInputStream(jsonObjStr.getBytes(StandardCharsets.UTF_8));
+
+    final JsonTableRowCoder coder = new JsonTableRowCoder(grammar);
+
+    final TableRow row = coder.decode(jsonObjInputStream, context);
+
+    Assert.assertTrue(((long) row.get("field_1")) == 1471910400);
+    Assert.assertTrue(((String) row.get("field_2")).equals("2014-08-19 07:41:35.220"));
+  }
+
+  @Test
   public void testJsonTableRowCoderWithRepeatedRecords() throws CoderException, IOException {
     final String grammarRepr = "{\"fields\":["
         + "{\"name\":\"objs\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"objs\", \"isRepeated\": true, \"fields\":["
