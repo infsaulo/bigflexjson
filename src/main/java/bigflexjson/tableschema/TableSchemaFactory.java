@@ -9,42 +9,42 @@ import com.google.api.services.bigquery.model.TableFieldSchema;
 import com.google.api.services.bigquery.model.TableSchema;
 import com.google.common.base.Preconditions;
 
-import bigflexjson.grammar.BigQueryTypes;
-import bigflexjson.grammar.Field;
-import bigflexjson.grammar.Grammar;
+import bigflexjson.grammar.DestTypes;
+import bigflexjson.grammar.bigtable.BigQueryField;
+import bigflexjson.grammar.bigtable.BigQueryGrammar;
 
 public class TableSchemaFactory implements Serializable {
 
   private static final long serialVersionUID = 1465681315148137897L;
 
-  private static TableFieldSchema getRecordFieldSchema(final Field field) {
+  private static TableFieldSchema getRecordFieldSchema(final BigQueryField field) {
 
     final TableFieldSchema recordSchema = new TableFieldSchema();
-    final List<Field> recordFields = field.getFields();
-    final List<String> bigQueryTypes = Arrays.asList(BigQueryTypes.names());
+    final List<BigQueryField> recordFields = field.getFields();
+    final List<String> bigQueryTypes = Arrays.asList(DestTypes.names());
     final List<TableFieldSchema> recordSchemaList = new ArrayList<>();
 
-    for (final Field innerField : recordFields) {
+    for (final BigQueryField innerField : recordFields) {
 
-      Preconditions.checkArgument(bigQueryTypes.contains(field.getBqType()));
+      Preconditions.checkArgument(bigQueryTypes.contains(field.getDestType()));
       recordSchemaList.add(getFieldSchema(innerField));
     }
 
-    recordSchema.setName(field.getDestName()).setType(field.getBqType())
+    recordSchema.setName(field.getDestName()).setType(field.getDestType())
         .setFields(recordSchemaList);
 
     return recordSchema;
   }
 
-  private static TableFieldSchema getFieldSchema(final Field field) {
+  private static TableFieldSchema getFieldSchema(final BigQueryField field) {
 
     TableFieldSchema fieldSchema = new TableFieldSchema();
-    if (field.getBqType().equals(BigQueryTypes.RECORD.name())) {
+    if (field.getDestType().equals(DestTypes.RECORD.name())) {
 
       fieldSchema = getRecordFieldSchema(field);
     } else {
 
-      fieldSchema.setName(field.getDestName()).setType(field.getBqType());
+      fieldSchema.setName(field.getDestName()).setType(field.getDestType());
     }
 
     if (field.isRepeated()) {
@@ -54,16 +54,16 @@ public class TableSchemaFactory implements Serializable {
     return fieldSchema;
   }
 
-  public static TableSchema getTableSchema(final Grammar grammar) {
+  public static TableSchema getTableSchema(final BigQueryGrammar grammar) {
 
     final TableSchema schema = new TableSchema();
-    final List<Field> fields = grammar.getFields();
-    final List<String> bigQueryTypes = Arrays.asList(BigQueryTypes.names());
+    final List<BigQueryField> fields = grammar.getFields();
+    final List<String> bigQueryTypes = Arrays.asList(DestTypes.names());
 
     final List<TableFieldSchema> fieldSchemaList = new ArrayList<>();
 
-    for (final Field field : fields) {
-      Preconditions.checkArgument(bigQueryTypes.contains(field.getBqType()));
+    for (final BigQueryField field : fields) {
+      Preconditions.checkArgument(bigQueryTypes.contains(field.getDestType()));
       fieldSchemaList.add(getFieldSchema(field));
     }
 
