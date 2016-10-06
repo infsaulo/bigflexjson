@@ -10,8 +10,8 @@ import com.google.api.services.bigquery.model.TableSchema;
 import com.google.common.base.Preconditions;
 
 import bigflexjson.grammar.DestTypes;
-import bigflexjson.grammar.bigtable.BigQueryField;
-import bigflexjson.grammar.bigtable.BigQueryGrammar;
+import bigflexjson.grammar.bigquery.BigQueryField;
+import bigflexjson.grammar.bigquery.BigQueryGrammar;
 
 public class TableSchemaFactory implements Serializable {
 

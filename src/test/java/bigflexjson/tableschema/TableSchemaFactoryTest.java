@@ -14,9 +14,9 @@ import com.google.api.services.bigquery.model.TableSchema;
 
 import bigflexjson.grammar.Field;
 import bigflexjson.grammar.Grammar;
-import bigflexjson.grammar.bigtable.BigQueryField;
-import bigflexjson.grammar.bigtable.BigQueryGrammar;
-import bigflexjson.grammar.bigtable.BigQueryGrammarParser;
+import bigflexjson.grammar.bigquery.BigQueryField;
+import bigflexjson.grammar.bigquery.BigQueryGrammar;
+import bigflexjson.grammar.bigquery.BigQueryGrammarParser;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TableSchemaFactoryTest {

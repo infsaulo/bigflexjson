@@ -14,8 +14,8 @@ import org.mockito.Mock;
 
 import com.google.api.services.bigquery.model.TableRow;
 
-import bigflexjson.grammar.bigtable.BigQueryGrammar;
-import bigflexjson.grammar.bigtable.BigQueryGrammarParser;
+import bigflexjson.grammar.bigquery.BigQueryGrammar;
+import bigflexjson.grammar.bigquery.BigQueryGrammarParser;
 
 public class JsonTableRowCoderTest {
 

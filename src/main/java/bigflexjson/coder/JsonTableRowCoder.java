@@ -17,8 +17,8 @@ import com.wizzardo.tools.json.JsonItem;
 import com.wizzardo.tools.json.JsonObject;
 import com.wizzardo.tools.json.JsonTools;
 
-import bigflexjson.grammar.bigtable.BigQueryField;
-import bigflexjson.grammar.bigtable.BigQueryGrammar;
+import bigflexjson.grammar.bigquery.BigQueryField;
+import bigflexjson.grammar.bigquery.BigQueryGrammar;
 
 public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 
