@@ -2,7 +2,7 @@ package bigflexjson.grammar;
 
 import org.junit.Test;
 
-import bigflexjson.grammar.bigquery.BigQueryGrammarParser;
+import bigflexjson.bigquery.grammar.BigQueryGrammarParser;
 
 public class GrammarParseTest {
 

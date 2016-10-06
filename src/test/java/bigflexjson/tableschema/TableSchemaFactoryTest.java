@@ -12,11 +12,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.google.api.services.bigquery.model.TableFieldSchema;
 import com.google.api.services.bigquery.model.TableSchema;
 
+import bigflexjson.bigquery.grammar.BigQueryField;
+import bigflexjson.bigquery.grammar.BigQueryGrammar;
+import bigflexjson.bigquery.grammar.BigQueryGrammarParser;
+import bigflexjson.bigquery.tableschema.TableSchemaFactory;
 import bigflexjson.grammar.Field;
 import bigflexjson.grammar.Grammar;
-import bigflexjson.grammar.bigquery.BigQueryField;
-import bigflexjson.grammar.bigquery.BigQueryGrammar;
-import bigflexjson.grammar.bigquery.BigQueryGrammarParser;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TableSchemaFactoryTest {

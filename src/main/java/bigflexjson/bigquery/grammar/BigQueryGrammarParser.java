@@ -1,4 +1,4 @@
-package bigflexjson.grammar.bigquery;
+package bigflexjson.bigquery.grammar;
 
 import org.apache.beam.sdk.repackaged.com.google.common.base.Preconditions;
 

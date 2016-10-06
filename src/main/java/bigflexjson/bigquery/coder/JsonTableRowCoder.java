@@ -1,4 +1,4 @@
-package bigflexjson.coder;
+package bigflexjson.bigquery.coder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +17,8 @@ import com.wizzardo.tools.json.JsonItem;
 import com.wizzardo.tools.json.JsonObject;
 import com.wizzardo.tools.json.JsonTools;
 
-import bigflexjson.grammar.bigquery.BigQueryField;
-import bigflexjson.grammar.bigquery.BigQueryGrammar;
+import bigflexjson.bigquery.grammar.BigQueryField;
+import bigflexjson.bigquery.grammar.BigQueryGrammar;
 
 public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 

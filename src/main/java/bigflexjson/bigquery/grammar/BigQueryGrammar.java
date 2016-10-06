@@ -1,4 +1,4 @@
-package bigflexjson.grammar.bigquery;
+package bigflexjson.bigquery.grammar;
 
 import java.io.Serializable;
 import java.util.List;

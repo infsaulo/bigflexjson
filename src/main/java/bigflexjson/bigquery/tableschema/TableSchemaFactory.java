@@ -1,4 +1,4 @@
-package bigflexjson.tableschema;
+package bigflexjson.bigquery.tableschema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,9 +9,9 @@ import com.google.api.services.bigquery.model.TableFieldSchema;
 import com.google.api.services.bigquery.model.TableSchema;
 import com.google.common.base.Preconditions;
 
+import bigflexjson.bigquery.grammar.BigQueryField;
+import bigflexjson.bigquery.grammar.BigQueryGrammar;
 import bigflexjson.grammar.DestTypes;
-import bigflexjson.grammar.bigquery.BigQueryField;
-import bigflexjson.grammar.bigquery.BigQueryGrammar;
 
 public class TableSchemaFactory implements Serializable {
 
