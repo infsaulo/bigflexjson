@@ -1,5 +1,7 @@
 package bigflexjson.bigquery.grammar;
 
+import java.util.List;
+
 import org.apache.beam.sdk.repackaged.com.google.common.base.Preconditions;
 
 import com.wizzardo.tools.json.JsonTools;
@@ -16,12 +18,23 @@ public class BigQueryGrammarParser extends GrammarParser {
 
     Preconditions.checkNotNull(grammar.getFields(), "fields list must be present");
 
-    validateFields(grammar.getFields());
+    validateBigQueryFields(grammar.getFields());
 
     return grammar;
   }
 
-  protected void validateRequiredFields(final BigQueryField field)
+  protected void validateBigQueryFields(final List<BigQueryField> fields)
+      throws IllegalStateException, NullPointerException {
+
+    Preconditions.checkState(fields.size() > 0, "fields list must contain at least one element");
+
+    for (final BigQueryField field : fields) {
+      validateBigQueryRequiredFields(field);
+      validateField(field);
+    }
+  }
+
+  protected void validateBigQueryRequiredFields(final BigQueryField field)
       throws NullPointerException, IllegalStateException {
 
     super.validateRequiredFields(field);

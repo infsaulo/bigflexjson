@@ -1,4 +1,4 @@
-package bigflexjson.tableschema;
+package bigflexjson.bigquery.tableschema;
 
 import java.util.List;
 

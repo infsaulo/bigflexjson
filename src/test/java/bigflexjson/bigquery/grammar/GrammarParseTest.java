@@ -1,4 +1,4 @@
-package bigflexjson.grammar;
+package bigflexjson.bigquery.grammar;
 
 import org.junit.Test;
 

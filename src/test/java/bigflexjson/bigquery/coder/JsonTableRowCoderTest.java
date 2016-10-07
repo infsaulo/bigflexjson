@@ -1,4 +1,4 @@
-package bigflexjson.coder;
+package bigflexjson.bigquery.coder;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
