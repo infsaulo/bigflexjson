@@ -86,6 +86,8 @@ public class GrammarParser {
 
       case "STRING":
         break;
+      case "INTEGER":
+        break;
       case "BYTES":
         break;
       case "TIMESTAMP":
