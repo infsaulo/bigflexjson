@@ -110,28 +110,28 @@ public class JsonListMutationCoder extends AtomicCoder<List<Mutation>> {
 
   private byte[] getValueFromInteger(final JsonObject object, final BigTableField field) {
 
-    final byte[] value = object.getAsLong(field.getName()).toString().getBytes();
+    final byte[] value = object.getAsLong(field.getName()).toString().getBytes(Charsets.UTF_8);
 
     return value;
   }
 
   private byte[] getValueFromString(final JsonObject object, final BigTableField field) {
 
-    final byte[] value = object.getAsString(field.getName()).getBytes();
+    final byte[] value = object.getAsString(field.getName()).getBytes(Charsets.UTF_8);
 
     return value;
   }
 
   private byte[] getValueFromBytes(final JsonObject object, final BigTableField field) {
 
-    final byte[] value = object.getAsString(field.getName()).getBytes();
+    final byte[] value = object.getAsString(field.getName()).getBytes(Charsets.UTF_8);
 
     return value;
   }
 
   private byte[] getValueFromDecimal(final JsonObject object, final BigTableField field) {
 
-    final byte[] value = object.getAsDouble(field.getName()).toString().getBytes();
+    final byte[] value = object.getAsDouble(field.getName()).toString().getBytes(Charsets.UTF_8);
 
     return value;
   }

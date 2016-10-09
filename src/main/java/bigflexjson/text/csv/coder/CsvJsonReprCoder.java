@@ -52,14 +52,14 @@ public class CsvJsonReprCoder extends AtomicCoder<String> {
       switch (field.getDestType()) {
         case "INTEGER":
           jsonMap.put(field.getDestName(),
-              Long.valueOf(parsedCsvEntry[Integer.valueOf(field.getName())]));
+              Long.valueOf(parsedCsvEntry[Integer.parseInt(field.getName())]));
           break;
         case "STRING":
-          jsonMap.put(field.getDestName(), parsedCsvEntry[Integer.valueOf(field.getName())]);
+          jsonMap.put(field.getDestName(), parsedCsvEntry[Integer.parseInt(field.getName())]);
           break;
         case "DECIMAL":
           jsonMap.put(field.getDestName(),
-              Double.valueOf(parsedCsvEntry[Integer.valueOf(field.getName())]));
+              Double.valueOf(parsedCsvEntry[Integer.parseInt(field.getName())]));
           break;
         default:
           throw new IllegalStateException("not supported destType " + field.getDestType());
