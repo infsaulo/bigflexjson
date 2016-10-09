@@ -1,4 +1,8 @@
 BigFlexJson
 ==========
 
-Provides the Coder and the TableSchema given a json schema. Useful to apply on batch/stream Dataflow jobs where is necessary to persist the json messages to BigQuery tables.
+Provides Grammar and Coder definition to process data at Google's Dataflow, just defining json based grammars to define how your data looks like. Supported kind of data and frameworks:
+
+- Google BigTable
+- Google BigQuery
+- Simple text csv
