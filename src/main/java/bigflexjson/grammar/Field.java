@@ -1,7 +1,6 @@
 package bigflexjson.grammar;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class Field implements Serializable {
 
@@ -16,17 +15,11 @@ public class Field implements Serializable {
   // Type of data associated with the original field
   String srcType;
 
-  // Google BigQuery desirable type of the end field
-  String bqType;
+  // Desirable type of the end field
+  String destType;
 
   // Determines the kind of serialization used in the original field.
   String srcSerialization;
-
-  // Indicates if Field should be BigQuery's Repeated
-  boolean isRepeated;
-
-  // If bqType is RECORD should contains a list of Field
-  List<Field> fields;
 
   public String getName() {
 
@@ -43,22 +36,13 @@ public class Field implements Serializable {
     return srcType;
   }
 
-  public String getBqType() {
+  public String getDestType() {
 
-    return bqType;
+    return destType;
   }
 
   public String getSrcSerialization() {
 
     return srcSerialization;
-  }
-
-  public boolean isRepeated() {
-    return isRepeated;
-  }
-
-  public List<Field> getFields() {
-
-    return fields;
   }
 }

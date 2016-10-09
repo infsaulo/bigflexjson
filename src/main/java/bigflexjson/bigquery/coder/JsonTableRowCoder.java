@@ -1,4 +1,4 @@
-package bigflexjson.coder;
+package bigflexjson.bigquery.coder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,16 +17,16 @@ import com.wizzardo.tools.json.JsonItem;
 import com.wizzardo.tools.json.JsonObject;
 import com.wizzardo.tools.json.JsonTools;
 
-import bigflexjson.grammar.Field;
-import bigflexjson.grammar.Grammar;
+import bigflexjson.bigquery.grammar.BigQueryField;
+import bigflexjson.bigquery.grammar.BigQueryGrammar;
 
 public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 
   private static final long serialVersionUID = 4331898456496382910L;
 
-  private final Grammar grammar;
+  private final BigQueryGrammar grammar;
 
-  public JsonTableRowCoder(final Grammar grammar) {
+  public JsonTableRowCoder(final BigQueryGrammar grammar) {
 
     this.grammar = grammar;
   }
@@ -59,7 +59,7 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 
     final TableRow row = new TableRow();
 
-    for (final Field field : grammar.getFields()) {
+    for (final BigQueryField field : grammar.getFields()) {
 
       if (inputObject.containsKey(field.getName())) {
         switch (field.getSrcType()) {
@@ -84,9 +84,10 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
     return row;
   }
 
-  private void fromIntegerType(final Field field, final JsonObject obj, final TableRow row) {
+  private void fromIntegerType(final BigQueryField field, final JsonObject obj,
+      final TableRow row) {
 
-    switch (field.getBqType()) {
+    switch (field.getDestType()) {
 
       case "STRING":
         if (field.isRepeated()) {
@@ -132,13 +133,15 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         }
         break;
       default:
-        throw new IllegalStateException(field.getBqType() + " cannot be type casted from INTEGER");
+        throw new IllegalStateException(
+            field.getDestType() + " cannot be type casted from INTEGER");
     }
   }
 
-  private void fromDecimalType(final Field field, final JsonObject obj, final TableRow row) {
+  private void fromDecimalType(final BigQueryField field, final JsonObject obj,
+      final TableRow row) {
 
-    switch (field.getBqType()) {
+    switch (field.getDestType()) {
 
       case "STRING":
         if (field.isRepeated()) {
@@ -183,13 +186,14 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         }
         break;
       default:
-        throw new IllegalStateException(field.getBqType() + " cannot be type casted from DECIMAL");
+        throw new IllegalStateException(
+            field.getDestType() + " cannot be type casted from DECIMAL");
     }
   }
 
-  private void fromStringType(final Field field, final JsonObject obj, final TableRow row) {
+  private void fromStringType(final BigQueryField field, final JsonObject obj, final TableRow row) {
 
-    switch (field.getBqType()) {
+    switch (field.getDestType()) {
 
       case "STRING":
       case "TIMESTAMP":
@@ -223,25 +227,25 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         }
         break;
       default:
-        throw new IllegalStateException(field.getBqType() + " cannot be type casted from STRING");
+        throw new IllegalStateException(field.getDestType() + " cannot be type casted from STRING");
     }
   }
 
-  private void fromRecordType(final Field field, final JsonObject obj, final TableRow row) {
+  private void fromRecordType(final BigQueryField field, final JsonObject obj, final TableRow row) {
 
-    switch (field.getBqType()) {
+    switch (field.getDestType()) {
 
       case "RECORD":
         if (field.isRepeated()) {
           final List<TableRow> fields = new ArrayList<>();
-          final List<Field> recordFields = field.getFields();
+          final List<BigQueryField> recordFields = field.getFields();
 
           final JsonArray jsonFields = obj.getAsJsonArray(field.getName());
 
           for (final JsonItem innerField : jsonFields) {
             final JsonObject jsonObject = innerField.asJsonObject();
             final TableRow innerRow = new TableRow();
-            for (final Field recordField : recordFields) {
+            for (final BigQueryField recordField : recordFields) {
               if (jsonObject.containsKey(recordField.getName())) {
                 switch (recordField.getSrcType()) {
                   case "INTEGER":
@@ -255,13 +259,13 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
                     break;
                   case "RECORD":
                     final List<TableRow> innerFields = new ArrayList<>();
-                    final List<Field> innerRecordFields = recordField.getFields();
+                    final List<BigQueryField> innerRecordFields = recordField.getFields();
                     final JsonArray innerJsonFields =
                         jsonObject.getAsJsonArray(recordField.getName());
                     for (final JsonItem recInnerField : innerJsonFields) {
                       final JsonObject recJsonObject = recInnerField.asJsonObject();
                       final TableRow recInnerRow = new TableRow();
-                      for (final Field recRecordField : innerRecordFields) {
+                      for (final BigQueryField recRecordField : innerRecordFields) {
                         if (recJsonObject.containsKey(recRecordField.getName())) {
                           switch (recRecordField.getSrcType()) {
                             case "INTEGER":
@@ -299,12 +303,12 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
 
         } else {
 
-          final List<Field> recordFields = field.getFields();
+          final List<BigQueryField> recordFields = field.getFields();
 
           final JsonObject jsonObject = obj.getAsJsonObject(field.getName());
 
           final TableRow innerRow = new TableRow();
-          for (final Field recordField : recordFields) {
+          for (final BigQueryField recordField : recordFields) {
             if (jsonObject.containsKey(recordField.getName())) {
               switch (recordField.getSrcType()) {
                 case "INTEGER":
@@ -318,13 +322,13 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
                   break;
                 case "RECORD":
                   final List<TableRow> innerFields = new ArrayList<>();
-                  final List<Field> innerRecordFields = recordField.getFields();
+                  final List<BigQueryField> innerRecordFields = recordField.getFields();
                   final JsonArray innerJsonFields =
                       jsonObject.getAsJsonArray(recordField.getName());
                   for (final JsonItem recInnerField : innerJsonFields) {
                     final JsonObject recJsonObject = recInnerField.asJsonObject();
                     final TableRow recInnerRow = new TableRow();
-                    for (final Field recRecordField : innerRecordFields) {
+                    for (final BigQueryField recRecordField : innerRecordFields) {
                       if (recJsonObject.containsKey(recRecordField.getName())) {
                         switch (recRecordField.getSrcType()) {
                           case "INTEGER":
@@ -359,7 +363,7 @@ public class JsonTableRowCoder extends AtomicCoder<TableRow> {
         }
         break;
       default:
-        throw new IllegalStateException(field.getBqType() + " cannot be type casted from RECORD");
+        throw new IllegalStateException(field.getDestType() + " cannot be type casted from RECORD");
     }
   }
 }

@@ -1,6 +1,4 @@
-package bigflexjson.tableschema;
-
-import static org.mockito.Mockito.when;
+package bigflexjson.bigquery.tableschema;
 
 import java.util.List;
 
@@ -14,24 +12,23 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.google.api.services.bigquery.model.TableFieldSchema;
 import com.google.api.services.bigquery.model.TableSchema;
 
+import bigflexjson.bigquery.grammar.BigQueryField;
+import bigflexjson.bigquery.grammar.BigQueryGrammar;
+import bigflexjson.bigquery.grammar.BigQueryGrammarParser;
 import bigflexjson.grammar.Field;
 import bigflexjson.grammar.Grammar;
-import bigflexjson.grammar.GrammarParser;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TableSchemaFactoryTest {
 
   @Mock
-  Field field1;
+  BigQueryField field1;
 
   @Mock
-  Field field2;
+  BigQueryField field2;
 
   @Mock
-  Field field3;
-
-  @Mock
-  Grammar consistentGrammar;
+  BigQueryField field3;
 
   @Mock
   Grammar inconsistentGrammar;
@@ -39,15 +36,14 @@ public class TableSchemaFactoryTest {
   @Test
   public void testTableSchemaFactory() {
 
-    when(field1.getBqType()).thenReturn("INTEGER");
-    when(field1.getDestName()).thenReturn("field_1");
-    when(field2.getBqType()).thenReturn("STRING");
-    when(field2.getDestName()).thenReturn("field_2");
+    final BigQueryGrammarParser parser = new BigQueryGrammarParser();
 
+    final BigQueryGrammar consistentGrammar = parser.getBigQueryGrammar(
+        "{\"fields\":[{\"name\":\"field1\", \"srcType\":\"INTEGER\", \"destName\":\"field_1\", "
+            + "\"destType\":\"INTEGER\"},{\"name\":\"field2\", \"srcType\":\"STRING\", "
+            + "\"destName\":\"field_2\", \"destType\":\"STRING\"}]}");
 
-    final List<Field> consistentFields = ImmutableList.of(field1, field2);
-
-    when(consistentGrammar.getFields()).thenReturn(consistentFields);
+    final List<? extends Field> consistentFields = ImmutableList.of(field1, field2);
 
     final TableSchema consistentTableSchema = TableSchemaFactory.getTableSchema(consistentGrammar);
 
@@ -71,15 +67,21 @@ public class TableSchemaFactoryTest {
   @Test
   public void testRecordTableSchemaFactory() {
     final String grammarJsonRepr = "{\"fields\":["
-        + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"field_1\", \"isRepeated\": true },"
-        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"field_2\", "
+        + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", \"destName\":\"field_1\","
+        + " \"isRepeated\": true },"
+        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"field_2\", "
         + "\"srcSerialization\":\"hex\"},"
-        + "{\"name\":\"field3\", \"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"field_3\", \"isRepeated\": true,  \"fields\": "
-        + "[{\"name\":\"innerfield1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"inner_field_1\"},"
-        + "{\"name\":\"innerfield2\",\"srcType\":\"STRING\",\"bqType\":\"STRING\", \"destName\":\"inner_field_2\", "
-        + "\"srcSerialization\":\"hex\"},{\"name\":\"innerfield3\",\"srcType\":\"RECORD\",\"bqType\":\"RECORD\", \"destName\":\"inner_field_3\", \"fields\": [{\"name\":\"innerinnerfield1\",\"srcType\":\"INTEGER\",\"bqType\":\"INTEGER\", \"destName\":\"inner_inner_field_1\", \"isRepeated\": true }]}]}]}";
+        + "{\"name\":\"field3\", \"srcType\":\"RECORD\",\"destType\":\"RECORD\", \"destName\":\"field_3\", "
+        + "\"isRepeated\": true,  \"fields\": "
+        + "[{\"name\":\"innerfield1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", "
+        + "\"destName\":\"inner_field_1\"},"
+        + "{\"name\":\"innerfield2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"inner_field_2\", "
+        + "\"srcSerialization\":\"hex\"},{\"name\":\"innerfield3\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", "
+        + "\"destName\":\"inner_field_3\", \"fields\": [{\"name\":\"innerinnerfield1\",\"srcType\":\"INTEGER\","
+        + "\"destType\":\"INTEGER\", \"destName\":\"inner_inner_field_1\", \"isRepeated\": true }]}]}]}";
 
-    final Grammar grammar = GrammarParser.getGrammar(grammarJsonRepr);
+    final BigQueryGrammarParser parser = new BigQueryGrammarParser();
+    final BigQueryGrammar grammar = parser.getBigQueryGrammar(grammarJsonRepr);
 
     final TableSchema table = TableSchemaFactory.getTableSchema(grammar);
 
@@ -129,22 +131,4 @@ public class TableSchemaFactoryTest {
       }
     }
   }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testInconsistentTableSchemaFactory() {
-
-    when(field1.getBqType()).thenReturn("INTEGER");
-    when(field1.getDestName()).thenReturn("field_1");
-    when(field2.getBqType()).thenReturn("STRING");
-    when(field2.getDestName()).thenReturn("field_2");
-    when(field3.getBqType()).thenReturn("NOTBQTYPE");
-    when(field3.getDestName()).thenReturn("field_3");
-
-    final List<Field> inconsistentFields = ImmutableList.of(field1, field2, field3);
-
-    when(inconsistentGrammar.getFields()).thenReturn(inconsistentFields);
-
-    TableSchemaFactory.getTableSchema(inconsistentGrammar);
-  }
-
 }

@@ -62,7 +62,7 @@ sourceCompatibility = 1.8
 
       compile 'ch.qos.logback:logback-classic:+'
       compile 'ch.qos.logback:logback-core:+'
-	  compile "org.apache.beam:java-sdk-all:+"
+      compile group: 'org.apache.beam', name: 'beam-sdks-java-io-google-cloud-platform', version: '0.2.0-incubating'
 	  compile 'com.wizzardo.tools:tools:+'
 	  
       testCompile 'junit:junit:+'
