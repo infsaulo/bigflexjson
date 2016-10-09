@@ -9,9 +9,9 @@ public class BigTableGrammarPaserTest {
 
     final String grammarRepr =
         "{\"fields\":[{\"name\":\"field1\",\"srcType\":\"INTEGER\", \"destName\":\"field_1\", "
-            + "\"destType\":\"STRING\", \"isValueQualifier\":false, \"destQualifier\": \"qualifierName\"},"
+            + "\"destType\":\"STRING\", \"isQualifier\":false, \"destQualifier\": \"qualifierName\"},"
             + "{\"name\":\"field2\",\"srcType\":\"INTEGER\", \"destName\":\"field_2\", \"destType\":\"STRING\", "
-            + "\"isValueQualifier\":true}]}";
+            + "\"isQualifier\":true}]}";
 
     final BigTableGrammarParser parser = new BigTableGrammarParser();
     parser.getBigTableGrammar(grammarRepr);
@@ -22,9 +22,9 @@ public class BigTableGrammarPaserTest {
 
     final String grammarRepr =
         "{\"fields\":[{\"name\":\"field1\",\"srcType\":\"INTEGER\", \"destName\":\"field_1\", "
-            + "\"destType\":\"STRING\", \"isValueQualifier\":false, \"destQualifier\": \"qualifierName\"},"
+            + "\"destType\":\"STRING\", \"isQualifier\":false, \"destQualifier\": \"qualifierName\"},"
             + "{\"name\":\"field2\",\"srcType\":\"INTEGER\", \"destName\":\"field_2\", \"destType\":\"STRING\", "
-            + "\"isValueQualifier\":true, \"destQualifier\":\"qualifier\"}]}";
+            + "\"isQualifier\":true, \"destQualifier\":\"qualifier\"}]}";
 
     final BigTableGrammarParser parser = new BigTableGrammarParser();
     parser.getBigTableGrammar(grammarRepr);
@@ -35,9 +35,9 @@ public class BigTableGrammarPaserTest {
 
     final String grammarRepr =
         "{\"fields\":[{\"name\":\"field1\",\"srcType\":\"INTEGER\", \"destName\":\"field_1\", "
-            + "\"destType\":\"STRING\", \"isValueQualifier\":false},"
+            + "\"destType\":\"STRING\", \"isQualifier\":false},"
             + "{\"name\":\"field2\",\"srcType\":\"INTEGER\", \"destName\":\"field_2\", \"destType\":\"STRING\", "
-            + "\"isValueQualifier\":true}]}";
+            + "\"isQualifier\":true}]}";
 
     final BigTableGrammarParser parser = new BigTableGrammarParser();
     parser.getBigTableGrammar(grammarRepr);

@@ -2,8 +2,6 @@ package bigflexjson.bigquery.grammar;
 
 import org.junit.Test;
 
-import bigflexjson.bigquery.grammar.BigQueryGrammarParser;
-
 public class GrammarParseTest {
 
   @Test
@@ -39,8 +37,8 @@ public class GrammarParseTest {
 
     final String grammarJsonRepr = "{\"fields\":["
         + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", \"destNames\":\"field_1\"},"
-        + "{\"name\":\"field2\",\"srcType\":\"BYTES\",\"destType\":\"STRING\", \"field_2\", \"srcSerialization\":\"hex\"}"
-        + "]}";
+        + "{\"name\":\"field2\",\"srcType\":\"BYTES\",\"destType\":\"STRING\", "
+        + "\"field_2\", \"srcSerialization\":\"hex\"}" + "]}";
 
     final BigQueryGrammarParser parser = new BigQueryGrammarParser();
     parser.getGrammar(grammarJsonRepr);
@@ -87,7 +85,8 @@ public class GrammarParseTest {
         + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"field_2\", "
         + "\"srcSerialization\":\"hex\"},"
         + "{\"name\":\"field3\", \"srcType\":\"RECORD\",\"destType\":\"RECORD\", \"destName\":\"field_3\", \"fields\": "
-        + "[{\"name\":\"innerfield1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", \"destName\":\"inner_field_1\"},"
+        + "[{\"name\":\"innerfield1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", "
+        + "\"destName\":\"inner_field_1\"},"
         + "{\"name\":\"innerfield2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"inner_field_2\", "
         + "\"srcSerialization\":\"hex\"}]}]}";
 

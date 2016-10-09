@@ -38,7 +38,7 @@ public class BigTableGrammarParser extends GrammarParser {
 
     super.validateRequiredFields(field);
 
-    Preconditions.checkNotNull(field.isValueQualifier, "isValueQualifier must be present");
+    Preconditions.checkNotNull(field.isValueQualifier(), "isValueQualifier must be present");
 
     if (!field.isValueQualifier()) {
 

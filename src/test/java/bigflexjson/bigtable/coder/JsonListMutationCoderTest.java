@@ -29,9 +29,9 @@ public class JsonListMutationCoderTest {
 
     final String grammarRepr =
         "{\"fields\":[{\"name\":\"field1\",\"srcType\":\"INTEGER\", \"destName\":\"field_1\", "
-            + "\"destType\":\"STRING\", \"isValueQualifier\":false, \"destQualifier\": \"qualifierName\"},"
+            + "\"destType\":\"STRING\", \"isQualifier\":false, \"destQualifier\": \"qualifierName\"},"
             + "{\"name\":\"field2\",\"srcType\":\"STRING\", \"destName\":\"field_2\", \"destType\":\"STRING\", "
-            + "\"isValueQualifier\":true}]}";
+            + "\"isQualifier\":true}]}";
 
     final BigTableGrammarParser parser = new BigTableGrammarParser();
     final BigTableGrammar grammar = parser.getBigTableGrammar(grammarRepr);

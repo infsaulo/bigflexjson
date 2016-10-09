@@ -15,7 +15,6 @@ import com.google.api.services.bigquery.model.TableSchema;
 import bigflexjson.bigquery.grammar.BigQueryField;
 import bigflexjson.bigquery.grammar.BigQueryGrammar;
 import bigflexjson.bigquery.grammar.BigQueryGrammarParser;
-import bigflexjson.bigquery.tableschema.TableSchemaFactory;
 import bigflexjson.grammar.Field;
 import bigflexjson.grammar.Grammar;
 
@@ -68,13 +67,18 @@ public class TableSchemaFactoryTest {
   @Test
   public void testRecordTableSchemaFactory() {
     final String grammarJsonRepr = "{\"fields\":["
-        + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", \"destName\":\"field_1\", \"isRepeated\": true },"
+        + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", \"destName\":\"field_1\","
+        + " \"isRepeated\": true },"
         + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"field_2\", "
         + "\"srcSerialization\":\"hex\"},"
-        + "{\"name\":\"field3\", \"srcType\":\"RECORD\",\"destType\":\"RECORD\", \"destName\":\"field_3\", \"isRepeated\": true,  \"fields\": "
-        + "[{\"name\":\"innerfield1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", \"destName\":\"inner_field_1\"},"
+        + "{\"name\":\"field3\", \"srcType\":\"RECORD\",\"destType\":\"RECORD\", \"destName\":\"field_3\", "
+        + "\"isRepeated\": true,  \"fields\": "
+        + "[{\"name\":\"innerfield1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", "
+        + "\"destName\":\"inner_field_1\"},"
         + "{\"name\":\"innerfield2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"inner_field_2\", "
-        + "\"srcSerialization\":\"hex\"},{\"name\":\"innerfield3\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", \"destName\":\"inner_field_3\", \"fields\": [{\"name\":\"innerinnerfield1\",\"srcType\":\"INTEGER\",\"destType\":\"INTEGER\", \"destName\":\"inner_inner_field_1\", \"isRepeated\": true }]}]}]}";
+        + "\"srcSerialization\":\"hex\"},{\"name\":\"innerfield3\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", "
+        + "\"destName\":\"inner_field_3\", \"fields\": [{\"name\":\"innerinnerfield1\",\"srcType\":\"INTEGER\","
+        + "\"destType\":\"INTEGER\", \"destName\":\"inner_inner_field_1\", \"isRepeated\": true }]}]}]}";
 
     final BigQueryGrammarParser parser = new BigQueryGrammarParser();
     final BigQueryGrammar grammar = parser.getBigQueryGrammar(grammarJsonRepr);

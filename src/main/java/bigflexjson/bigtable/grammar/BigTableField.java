@@ -10,13 +10,13 @@ public class BigTableField extends Field {
   String destQualifier;
 
   // Value stored as qualifier
-  boolean isValueQualifier;
+  boolean isQualifier;
 
   public String getDestQualifier() {
     return destQualifier;
   }
 
   public boolean isValueQualifier() {
-    return isValueQualifier;
+    return isQualifier;
   }
 }

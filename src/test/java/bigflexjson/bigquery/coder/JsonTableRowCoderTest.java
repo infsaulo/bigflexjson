@@ -14,7 +14,6 @@ import org.mockito.Mock;
 
 import com.google.api.services.bigquery.model.TableRow;
 
-import bigflexjson.bigquery.coder.JsonTableRowCoder;
 import bigflexjson.bigquery.grammar.BigQueryGrammar;
 import bigflexjson.bigquery.grammar.BigQueryGrammarParser;
 
@@ -72,18 +71,20 @@ public class JsonTableRowCoderTest {
 
   @Test
   public void testJsonTableRowCoderWithRepeatedRecords() throws CoderException, IOException {
-    final String grammarRepr = "{\"fields\":["
-        + "{\"name\":\"objs\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", \"destName\":\"objs\", \"isRepeated\": true, \"fields\":["
-        + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"destType\":\"STRING\", \"destName\":\"field_1\"},"
-        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"field_2\", \"isRepeated\":true}"
-        + "]}]}";
+    final String grammarRepr =
+        "{\"fields\":[" + "{\"name\":\"objs\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", "
+            + "\"destName\":\"objs\", \"isRepeated\": true, \"fields\":["
+            + "{\"name\":\"field1\",\"srcType\":\"INTEGER\",\"destType\":\"STRING\","
+            + " \"destName\":\"field_1\"},"
+            + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", "
+            + "\"destName\":\"field_2\", \"isRepeated\":true}" + "]}]}";
 
     final BigQueryGrammarParser parser = new BigQueryGrammarParser();
     final BigQueryGrammar grammar = parser.getBigQueryGrammar(grammarRepr);
 
 
-    final String jsonObjStr =
-        "{\"objs\":[{\"field1\":42,\"field2\":[\"12\"]},{\"field1\":13,\"field2\":[\"testObj\", \"testObj2\"]}]}";
+    final String jsonObjStr = "{\"objs\":[{\"field1\":42,\"field2\":[\"12\"]},{\"field1\":13,"
+        + "\"field2\":[\"testObj\", \"testObj2\"]}]}";
 
     final InputStream jsonObjInputStream =
         new ByteArrayInputStream(jsonObjStr.getBytes(StandardCharsets.UTF_8));
@@ -105,18 +106,21 @@ public class JsonTableRowCoderTest {
     final String grammarRepr = "{\"fields\":["
         + "{\"name\":\"field1\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", \"destName\":\"field_1\", "
         + "\"isRepeated\": true, \"fields\":"
-        + "[{\"name\":\"field3\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", \"destName\":\"field_3\",\"isRepeated\": true, "
-        + "\"fields\":[{\"name\":\"field4\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", \"destName\":\"field_4\", "
-        + "\"fields\":[{\"name\":\"field5\",\"srcType\":\"STRING\", \"destType\":\"STRING\", \"destName\":\"field_5\"}]}]}]},"
-        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"field_2\"}"
-        + "]}";
+        + "[{\"name\":\"field3\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", "
+        + "\"destName\":\"field_3\",\"isRepeated\": true, "
+        + "\"fields\":[{\"name\":\"field4\",\"srcType\":\"RECORD\",\"destType\":\"RECORD\", "
+        + "\"destName\":\"field_4\", "
+        + "\"fields\":[{\"name\":\"field5\",\"srcType\":\"STRING\", \"destType\":\"STRING\", "
+        + "\"destName\":\"field_5\"}]}]}]},"
+        + "{\"name\":\"field2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", "
+        + "\"destName\":\"field_2\"}" + "]}";
 
     final BigQueryGrammarParser parser = new BigQueryGrammarParser();
     final BigQueryGrammar grammar = parser.getBigQueryGrammar(grammarRepr);
 
 
-    final String jsonObjStr =
-        "{\"field1\":[{\"field3\":[{\"field4\":{\"field5\":\"test5\"}}] },{\"field3\":[{\"field4\":{\"field5\":\"test6\"}}]}], \"field2\": \"abgef102\"}";
+    final String jsonObjStr = "{\"field1\":[{\"field3\":[{\"field4\":{\"field5\":\"test5\"}}] },"
+        + "{\"field3\":[{\"field4\":{\"field5\":\"test6\"}}]}], \"field2\": \"abgef102\"}";
     final InputStream jsonObjInputStream =
         new ByteArrayInputStream(jsonObjStr.getBytes(StandardCharsets.UTF_8));
 
@@ -211,8 +215,19 @@ public class JsonTableRowCoderTest {
     final BigQueryGrammar grammar = parser.getBigQueryGrammar(grammarRepr);
 
 
-    final String jsonObjStr =
-        "{\"blockTimeEpochSecond\": 1415133245, \"fee\": 550000, \"hash\": \"5dec6aa6f0e8e15613e89cb40f499b81f143ac75d5ce482933168cc3e8671c96\", \"blockHash\": \"0000000000000000023dbebb7043b0420cb52047e22e48e6f37c2e15cb480733\", \"volumeIn\": 4001550006, \"outputs\": [{\"index\": 0, \"value\": 4000000000, \"cluster\": \"7dd5b463245c36e523145877f7899d04a7e1b3b0\", \"scriptPubKeyHex\": \"1f8b08000000000000002b5b29e27454f7298fcddac2db36ce7b5db6757ed1fddc20d2b106007a51610a19000000\", \"address\": \"42c52de50c3cad71db3c43bd44b689f42df38014\", \"type\": \"PUBKEYHASH\"}, {\"index\": 1, \"value\": 1000006, \"cluster\": \"90b090327d39966b46bb5d74eca3063f55327e68\", \"scriptPubKeyHex\": \"1f8b08000000000000002b5b2912586667c8e021713a700aefdf893ad12ae7af49fdec5803000be0be6b19000000\", \"address\": \"51763e31004818cb51940dfd912c5b24cfd61af9\", \"type\": \"PUBKEYHASH\"}], \"volumeOut\": 4001000006, \"blockPosition\": 1305, \"version\": 1, \"numOutputs\": 2, \"blockHeight\": 328542, \"numInputs\": 342, \"size\": 50516}";
+    final String jsonObjStr = "{\"blockTimeEpochSecond\": 1415133245, \"fee\": 550000, "
+        + "\"hash\": \"5dec6aa6f0e8e15613e89cb40f499b81f143ac75d5ce482933168cc3e8671c96\", "
+        + "\"blockHash\": \"0000000000000000023dbebb7043b0420cb52047e22e48e6f37c2e15cb480733\", "
+        + "\"volumeIn\": 4001550006, \"outputs\": [{\"index\": 0, \"value\": 4000000000, "
+        + "\"cluster\": \"7dd5b463245c36e523145877f7899d04a7e1b3b0\", " + "\"scriptPubKeyHex\": "
+        + "\"1f8b08000000000000002b5b29e27454f7298fcddac2db36ce7b5db6757ed1fddc20d2b106007a51610a19000000\", "
+        + "\"address\": \"42c52de50c3cad71db3c43bd44b689f42df38014\", \"type\": \"PUBKEYHASH\"}, "
+        + "{\"index\": 1, \"value\": 1000006, \"cluster\": \"90b090327d39966b46bb5d74eca3063f55327e68\", "
+        + "\"scriptPubKeyHex\": "
+        + "\"1f8b08000000000000002b5b2912586667c8e021713a700aefdf893ad12ae7af49fdec5803000be0be6b19000000\", "
+        + "\"address\": \"51763e31004818cb51940dfd912c5b24cfd61af9\", \"type\": \"PUBKEYHASH\"}], "
+        + "\"volumeOut\": 4001000006, \"blockPosition\": 1305, \"version\": 1, \"numOutputs\": 2, "
+        + "\"blockHeight\": 328542, \"numInputs\": 342, \"size\": 50516}";
 
     final InputStream jsonObjInputStream =
         new ByteArrayInputStream(jsonObjStr.getBytes(StandardCharsets.UTF_8));
