@@ -30,12 +30,13 @@ public class JsonListMutationTransformerTest {
     final BigTableGrammar grammar = parser.getBigTableGrammar(grammarRepr);
 
     final JsonListMutationTransformer transformer = new JsonListMutationTransformer(grammar);
-    final DoFnTester<String, KV<ByteString, List<Mutation>>> tester = DoFnTester.of(transformer);
+    final DoFnTester<String, KV<ByteString, Iterable<Mutation>>> tester =
+        DoFnTester.of(transformer);
 
     final String jsonObjStr =
         "{\"rowkey\":\"rowKeyValue\", \"field1\":42, \"field2\": \"qualifier\"}";
 
-    final List<KV<ByteString, List<Mutation>>> mutations = tester.processBundle(jsonObjStr);
+    final List<KV<ByteString, Iterable<Mutation>>> mutations = tester.processBundle(jsonObjStr);
 
     for (final Mutation mutation : mutations.get(0).getValue()) {
       final String familyName = mutation.getSetCell().getFamilyName();
