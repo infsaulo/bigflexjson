@@ -5,10 +5,12 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import org.apache.beam.sdk.transforms.DoFnTester;
+import org.apache.beam.sdk.values.KV;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.bigtable.v2.Mutation;
+import com.google.protobuf.ByteString;
 
 import bigflexjson.bigtable.grammar.BigTableGrammar;
 import bigflexjson.bigtable.grammar.BigTableGrammarParser;
@@ -28,13 +30,14 @@ public class JsonListMutationTransformerTest {
     final BigTableGrammar grammar = parser.getBigTableGrammar(grammarRepr);
 
     final JsonListMutationTransformer transformer = new JsonListMutationTransformer(grammar);
-    final DoFnTester<String, List<Mutation>> tester = DoFnTester.of(transformer);
+    final DoFnTester<String, KV<ByteString, List<Mutation>>> tester = DoFnTester.of(transformer);
 
-    final String jsonObjStr = "{\"field1\":42, \"field2\": \"qualifier\"}";
+    final String jsonObjStr =
+        "{\"rowkey\":\"rowKeyValue\", \"field1\":42, \"field2\": \"qualifier\"}";
 
-    final List<List<Mutation>> mutations = tester.processBundle(jsonObjStr);
+    final List<KV<ByteString, List<Mutation>>> mutations = tester.processBundle(jsonObjStr);
 
-    for (final Mutation mutation : mutations.get(0)) {
+    for (final Mutation mutation : mutations.get(0).getValue()) {
       final String familyName = mutation.getSetCell().getFamilyName();
       switch (familyName) {
         case "field_1":

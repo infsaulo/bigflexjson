@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.beam.sdk.transforms.DoFn;
+import org.apache.beam.sdk.values.KV;
 
 import com.google.api.client.util.Charsets;
 import com.google.bigtable.v2.Mutation;
@@ -15,7 +16,7 @@ import com.wizzardo.tools.json.JsonTools;
 import bigflexjson.bigtable.grammar.BigTableField;
 import bigflexjson.bigtable.grammar.BigTableGrammar;
 
-public class JsonListMutationTransformer extends DoFn<String, List<Mutation>> {
+public class JsonListMutationTransformer extends DoFn<String, KV<ByteString, List<Mutation>>> {
 
   private static final long serialVersionUID = 7366189023262848525L;
 
@@ -29,6 +30,19 @@ public class JsonListMutationTransformer extends DoFn<String, List<Mutation>> {
   public JsonListMutationTransformer() {
 
     grammar = null;
+  }
+
+  @Override
+  public void processElement(final ProcessContext entry) throws Exception {
+
+    final byte[] bytes = entry.element().getBytes(Charsets.UTF_8);
+
+    final JsonObject object = JsonTools.parse(bytes).asJsonObject();
+
+    final List<Mutation> mutations = buildListMutationWithGrammar(object);
+
+    entry.output(KV.of(ByteString.copyFrom(object.getAsString("rowkey").getBytes(Charsets.UTF_8)),
+        mutations));
   }
 
   private List<Mutation> buildListMutationWithGrammar(final JsonObject object) {
@@ -113,17 +127,4 @@ public class JsonListMutationTransformer extends DoFn<String, List<Mutation>> {
 
     return value;
   }
-
-  @Override
-  public void processElement(final ProcessContext entry) throws Exception {
-
-    final byte[] bytes = entry.element().getBytes(Charsets.UTF_8);
-
-    final JsonObject object = JsonTools.parse(bytes).asJsonObject();
-
-    final List<Mutation> mutations = buildListMutationWithGrammar(object);
-
-    entry.output(mutations);
-  }
-
 }
