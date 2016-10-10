@@ -39,46 +39,48 @@ public class JsonListMutationTransformer extends DoFn<String, List<Mutation>> {
 
     for (final BigTableField field : fields) {
 
-      final Builder builder = Mutation.SetCell.newBuilder();
-      builder.setFamilyName(field.getDestName());
-      builder.setTimestampMicros(-1);
+      if (object.get(field.getName()) != null) {
+        final Builder builder = Mutation.SetCell.newBuilder();
+        builder.setFamilyName(field.getDestName());
+        builder.setTimestampMicros(-1);
 
-      // Get the value
-      byte[] value;
-      switch (field.getSrcType()) {
-        case "INTEGER":
-          value = getValueFromInteger(object, field);
-          break;
-        case "STRING":
-          value = getValueFromString(object, field);
-          break;
-        case "BYTES":
-          value = getValueFromBytes(object, field);
-          break;
-        case "DECIMAL":
-          value = getValueFromDecimal(object, field);
-          break;
-        default:
-          throw new IllegalStateException(
-              "srcType not recognized from the field " + field.getName());
+        // Get the value
+        byte[] value;
+        switch (field.getSrcType()) {
+          case "INTEGER":
+            value = getValueFromInteger(object, field);
+            break;
+          case "STRING":
+            value = getValueFromString(object, field);
+            break;
+          case "BYTES":
+            value = getValueFromBytes(object, field);
+            break;
+          case "DECIMAL":
+            value = getValueFromDecimal(object, field);
+            break;
+          default:
+            throw new IllegalStateException(
+                "srcType not recognized from the field " + field.getName());
+        }
+
+        if (field.isValueQualifier()) {
+
+          builder.setColumnQualifier(ByteString.copyFrom(value));
+          builder.setValue(ByteString.copyFrom("".getBytes(Charsets.UTF_8)));
+
+        } else {
+
+          builder.setColumnQualifier(
+              ByteString.copyFrom(field.getDestQualifier().getBytes(Charsets.UTF_8)));
+          builder.setValue(ByteString.copyFrom(value));
+        }
+
+        final com.google.bigtable.v2.Mutation.Builder setCellBuilder = Mutation.newBuilder();
+        setCellBuilder.setSetCell(builder);
+
+        mutations.add(setCellBuilder.build());
       }
-
-      if (field.isValueQualifier()) {
-
-        builder.setColumnQualifier(ByteString.copyFrom(value));
-        builder.setValue(ByteString.copyFrom("".getBytes(Charsets.UTF_8)));
-
-      } else {
-
-        builder.setColumnQualifier(
-            ByteString.copyFrom(field.getDestQualifier().getBytes(Charsets.UTF_8)));
-        builder.setValue(ByteString.copyFrom(value));
-      }
-
-      final com.google.bigtable.v2.Mutation.Builder setCellBuilder = Mutation.newBuilder();
-      setCellBuilder.setSetCell(builder);
-
-      mutations.add(setCellBuilder.build());
     }
 
     return mutations;
