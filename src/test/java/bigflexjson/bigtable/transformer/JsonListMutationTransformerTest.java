@@ -1,31 +1,22 @@
-package bigflexjson.bigtable.coder;
+package bigflexjson.bigtable.transformer;
 
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.apache.beam.sdk.coders.Coder.Context;
-import org.apache.beam.sdk.coders.CoderException;
+import org.apache.beam.sdk.transforms.DoFnTester;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import com.google.bigtable.v2.Mutation;
 
 import bigflexjson.bigtable.grammar.BigTableGrammar;
 import bigflexjson.bigtable.grammar.BigTableGrammarParser;
 
-public class JsonListMutationCoderTest {
-
-  @Mock
-  final Context context = new Context(true);
+public class JsonListMutationTransformerTest {
 
   @Test
-  public void testJsonListMutationCoder() throws CoderException, IOException {
+  public void testJsonListMutationTransformer() throws Exception {
 
     final String grammarRepr =
         "{\"fields\":[{\"name\":\"field1\",\"srcType\":\"INTEGER\", \"destName\":\"field_1\", "
@@ -36,15 +27,14 @@ public class JsonListMutationCoderTest {
     final BigTableGrammarParser parser = new BigTableGrammarParser();
     final BigTableGrammar grammar = parser.getBigTableGrammar(grammarRepr);
 
+    final JsonListMutationTransformer transformer = new JsonListMutationTransformer(grammar);
+    final DoFnTester<String, List<Mutation>> tester = DoFnTester.of(transformer);
+
     final String jsonObjStr = "{\"field1\":42, \"field2\": \"qualifier\"}";
-    final InputStream jsonObjInputStream =
-        new ByteArrayInputStream(jsonObjStr.getBytes(StandardCharsets.UTF_8));
 
-    final JsonListMutationCoder coder = new JsonListMutationCoder(grammar);
+    final List<List<Mutation>> mutations = tester.processBundle(jsonObjStr);
 
-    final List<Mutation> mutations = coder.decode(jsonObjInputStream, context);
-
-    for (final Mutation mutation : mutations) {
+    for (final Mutation mutation : mutations.get(0)) {
       final String familyName = mutation.getSetCell().getFamilyName();
       switch (familyName) {
         case "field_1":

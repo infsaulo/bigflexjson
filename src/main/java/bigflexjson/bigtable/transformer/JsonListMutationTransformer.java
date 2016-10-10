@@ -1,14 +1,9 @@
-package bigflexjson.bigtable.coder;
+package bigflexjson.bigtable.transformer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.beam.sdk.coders.AtomicCoder;
-import org.apache.beam.sdk.coders.CoderException;
-import org.apache.beam.sdk.util.StreamUtils;
+import org.apache.beam.sdk.transforms.DoFn;
 
 import com.google.api.client.util.Charsets;
 import com.google.bigtable.v2.Mutation;
@@ -20,39 +15,20 @@ import com.wizzardo.tools.json.JsonTools;
 import bigflexjson.bigtable.grammar.BigTableField;
 import bigflexjson.bigtable.grammar.BigTableGrammar;
 
-public class JsonListMutationCoder extends AtomicCoder<List<Mutation>> {
+public class JsonListMutationTransformer extends DoFn<String, List<Mutation>> {
 
   private static final long serialVersionUID = 7366189023262848525L;
 
   private final BigTableGrammar grammar;
 
-  public JsonListMutationCoder(final BigTableGrammar grammar) {
+  public JsonListMutationTransformer(final BigTableGrammar grammar) {
 
     this.grammar = grammar;
   }
 
-  public JsonListMutationCoder() {
+  public JsonListMutationTransformer() {
 
     grammar = null;
-  }
-
-  @Override
-  public void encode(final List<Mutation> value, final OutputStream outStream,
-      final Context context) throws CoderException, IOException {
-
-  }
-
-  @Override
-  public List<Mutation> decode(final InputStream inStream, final Context context)
-      throws CoderException, IOException {
-
-    final byte[] bytes = StreamUtils.getBytes(inStream);
-
-    final JsonObject object = JsonTools.parse(bytes).asJsonObject();
-
-    final List<Mutation> mutations = buildListMutationWithGrammar(object);
-
-    return mutations;
   }
 
   private List<Mutation> buildListMutationWithGrammar(final JsonObject object) {
@@ -134,6 +110,18 @@ public class JsonListMutationCoder extends AtomicCoder<List<Mutation>> {
     final byte[] value = object.getAsDouble(field.getName()).toString().getBytes(Charsets.UTF_8);
 
     return value;
+  }
+
+  @Override
+  public void processElement(final ProcessContext entry) throws Exception {
+
+    final byte[] bytes = entry.element().getBytes(Charsets.UTF_8);
+
+    final JsonObject object = JsonTools.parse(bytes).asJsonObject();
+
+    final List<Mutation> mutations = buildListMutationWithGrammar(object);
+
+    entry.output(mutations);
   }
 
 }
