@@ -16,7 +16,7 @@ import com.wizzardo.tools.json.JsonTools;
 import bigflexjson.bigtable.grammar.BigTableField;
 import bigflexjson.bigtable.grammar.BigTableGrammar;
 
-public class JsonListMutationTransformer extends DoFn<String, KV<ByteString, List<Mutation>>> {
+public class JsonListMutationTransformer extends DoFn<String, KV<ByteString, Iterable<Mutation>>> {
 
   private static final long serialVersionUID = 7366189023262848525L;
 
