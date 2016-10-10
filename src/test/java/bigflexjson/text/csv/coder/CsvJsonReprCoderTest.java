@@ -27,13 +27,14 @@ public class CsvJsonReprCoderTest {
 
     final String grammarRepr = "{\"fields\":["
         + "{\"name\":\"0\",\"srcType\":\"STRING\",\"destType\":\"INTEGER\", \"destName\":\"field_1\"},"
-        + "{\"name\":\"1\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"field_2\"}"
+        + "{\"name\":\"1\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"field_2\"},"
+        + "{\"name\":\"2\",\"srcType\":\"STRING\",\"destType\":\"STRING\", \"destName\":\"field_3\"}"
         + "]}";
 
     final GrammarParser parser = new GrammarParser();
     final Grammar grammar = parser.getGrammar(grammarRepr);
 
-    final String csvStr = "42,field2test";
+    final String csvStr = "42,field2test,\"test,test2\"";
     final InputStream csvInputStream =
         new ByteArrayInputStream(csvStr.getBytes(StandardCharsets.UTF_8));
 
@@ -45,6 +46,7 @@ public class CsvJsonReprCoderTest {
 
     Assert.assertEquals(Long.valueOf(42), jsonObj.getAsLong("field_1"));
     Assert.assertEquals("field2test", jsonObj.getAsString("field_2"));
+    Assert.assertEquals("test,test2", jsonObj.getAsString("field_3"));
   }
 
 }

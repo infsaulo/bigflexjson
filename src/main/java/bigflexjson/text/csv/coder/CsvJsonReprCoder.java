@@ -42,8 +42,8 @@ public class CsvJsonReprCoder extends AtomicCoder<String> {
   public String decode(final InputStream inStream, final Context context)
       throws CoderException, IOException {
 
-    final String[] parsedCsvEntry =
-        new String(StreamUtils.getBytes(inStream), Charsets.UTF_8).split(",");
+    final String[] parsedCsvEntry = new String(StreamUtils.getBytes(inStream), Charsets.UTF_8)
+        .split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
     final Map<String, Object> jsonMap = new HashMap<>();
 
@@ -52,14 +52,15 @@ public class CsvJsonReprCoder extends AtomicCoder<String> {
       switch (field.getDestType()) {
         case "INTEGER":
           jsonMap.put(field.getDestName(),
-              Long.valueOf(parsedCsvEntry[Integer.parseInt(field.getName())]));
+              Long.valueOf(parsedCsvEntry[Integer.parseInt(field.getName())].replaceAll("\"", "")));
           break;
         case "STRING":
-          jsonMap.put(field.getDestName(), parsedCsvEntry[Integer.parseInt(field.getName())]);
+          jsonMap.put(field.getDestName(),
+              parsedCsvEntry[Integer.parseInt(field.getName())].replaceAll("\"", ""));
           break;
         case "DECIMAL":
-          jsonMap.put(field.getDestName(),
-              Double.valueOf(parsedCsvEntry[Integer.parseInt(field.getName())]));
+          jsonMap.put(field.getDestName(), Double
+              .valueOf(parsedCsvEntry[Integer.parseInt(field.getName())].replaceAll("\"", "")));
           break;
         default:
           throw new IllegalStateException("not supported destType " + field.getDestType());
