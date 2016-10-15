@@ -12,6 +12,12 @@ public class BigTableField extends Field {
   // Value stored as qualifier
   boolean isQualifier;
 
+  // Column field is thats necessary to store inside a qualifier
+  Field columnField;
+
+  // There is value to store in the column when this field is a qualifier
+  boolean isColumnValue;
+
   public String getDestQualifier() {
     return destQualifier;
   }
@@ -19,4 +25,13 @@ public class BigTableField extends Field {
   public boolean isValueQualifier() {
     return isQualifier;
   }
+
+  public boolean isColumnAndQualifier() {
+    return isColumnValue;
+  }
+
+  public Field getColumnField() {
+    return columnField;
+  }
+
 }

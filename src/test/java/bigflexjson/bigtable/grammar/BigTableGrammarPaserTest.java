@@ -11,7 +11,11 @@ public class BigTableGrammarPaserTest {
         "{\"fields\":[{\"name\":\"field1\",\"srcType\":\"INTEGER\", \"destName\":\"field_1\", "
             + "\"destType\":\"STRING\", \"isQualifier\":false, \"destQualifier\": \"qualifierName\"},"
             + "{\"name\":\"field2\",\"srcType\":\"INTEGER\", \"destName\":\"field_2\", \"destType\":\"STRING\", "
-            + "\"isQualifier\":true}]}";
+            + "\"isQualifier\":true}, "
+            + "{\"name\":\"field3\",\"srcType\":\"INTEGER\", \"destName\":\"field_3\", \"destType\":\"STRING\", "
+            + "\"isQualifier\":true, \"isColumnValue\":true, \"columnField\": "
+            + "{\"name\":\"innerField\",\"srcType\":\"INTEGER\", \"destName\":\"inner_field\", "
+            + "\"destType\":\"STRING\"}}]}";
 
     final BigTableGrammarParser parser = new BigTableGrammarParser();
     parser.getBigTableGrammar(grammarRepr);

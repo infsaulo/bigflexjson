@@ -44,10 +44,20 @@ public class BigTableGrammarParser extends GrammarParser {
 
       Preconditions.checkNotNull(field.getDestQualifier(),
           "destQualifier must be present when value is not intended to be stored as qualifier");
+
+
     } else {
 
       Preconditions.checkArgument(field.getDestQualifier() == null,
           "destQualifier must be absent when value is intended to be stored as qualifier");
+
+      if (field.isColumnAndQualifier()) {
+
+        Preconditions.checkNotNull(field.getColumnField(), "columnField must be present once "
+            + "isColumnValue is set to true and is intended to be stored as qualifier");
+
+        validateField(field.getColumnField());
+      }
     }
   }
 }
