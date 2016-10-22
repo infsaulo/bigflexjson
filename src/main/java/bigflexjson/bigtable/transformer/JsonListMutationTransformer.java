@@ -15,6 +15,7 @@ import com.wizzardo.tools.json.JsonTools;
 
 import bigflexjson.bigtable.grammar.BigTableField;
 import bigflexjson.bigtable.grammar.BigTableGrammar;
+import bigflexjson.grammar.Field;
 
 public class JsonListMutationTransformer extends DoFn<String, KV<ByteString, Iterable<Mutation>>> {
 
@@ -54,7 +55,9 @@ public class JsonListMutationTransformer extends DoFn<String, KV<ByteString, Ite
     for (final BigTableField field : fields) {
 
       if (object.get(field.getName()) != null) {
+
         final Builder builder = Mutation.SetCell.newBuilder();
+
         builder.setFamilyName(field.getDestName());
         builder.setTimestampMicros(-1);
 
@@ -81,7 +84,36 @@ public class JsonListMutationTransformer extends DoFn<String, KV<ByteString, Ite
         if (field.isValueQualifier()) {
 
           builder.setColumnQualifier(ByteString.copyFrom(value));
-          builder.setValue(ByteString.copyFrom("".getBytes(Charsets.UTF_8)));
+
+          if (field.isColumnAndQualifier()) {
+
+            final Field columnField = field.getColumnField();
+
+            byte[] columnValue;
+            switch (columnField.getSrcType()) {
+              case "INTEGER":
+                columnValue = getValueFromInteger(object, columnField);
+                break;
+              case "STRING":
+                columnValue = getValueFromString(object, columnField);
+                break;
+              case "BYTES":
+                columnValue = getValueFromBytes(object, columnField);
+                break;
+              case "DECIMAL":
+                columnValue = getValueFromDecimal(object, columnField);
+                break;
+              default:
+                throw new IllegalStateException(
+                    "srcType not recognized from the field " + columnField.getName());
+            }
+
+            builder.setValue(ByteString.copyFrom(columnValue));
+
+          } else {
+
+            builder.setValue(ByteString.copyFrom("".getBytes(Charsets.UTF_8)));
+          }
 
         } else {
 
@@ -100,28 +132,28 @@ public class JsonListMutationTransformer extends DoFn<String, KV<ByteString, Ite
     return mutations;
   }
 
-  private byte[] getValueFromInteger(final JsonObject object, final BigTableField field) {
+  private byte[] getValueFromInteger(final JsonObject object, final Field field) {
 
     final byte[] value = object.getAsLong(field.getName()).toString().getBytes(Charsets.UTF_8);
 
     return value;
   }
 
-  private byte[] getValueFromString(final JsonObject object, final BigTableField field) {
+  private byte[] getValueFromString(final JsonObject object, final Field field) {
 
     final byte[] value = object.getAsString(field.getName()).getBytes(Charsets.UTF_8);
 
     return value;
   }
 
-  private byte[] getValueFromBytes(final JsonObject object, final BigTableField field) {
+  private byte[] getValueFromBytes(final JsonObject object, final Field field) {
 
     final byte[] value = object.getAsString(field.getName()).getBytes(Charsets.UTF_8);
 
     return value;
   }
 
-  private byte[] getValueFromDecimal(final JsonObject object, final BigTableField field) {
+  private byte[] getValueFromDecimal(final JsonObject object, final Field field) {
 
     final byte[] value = object.getAsDouble(field.getName()).toString().getBytes(Charsets.UTF_8);
 

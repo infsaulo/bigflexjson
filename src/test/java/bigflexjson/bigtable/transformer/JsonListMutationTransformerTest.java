@@ -24,7 +24,11 @@ public class JsonListMutationTransformerTest {
         "{\"fields\":[{\"name\":\"field1\",\"srcType\":\"INTEGER\", \"destName\":\"field_1\", "
             + "\"destType\":\"STRING\", \"isQualifier\":false, \"destQualifier\": \"qualifierName\"},"
             + "{\"name\":\"field2\",\"srcType\":\"STRING\", \"destName\":\"field_2\", \"destType\":\"STRING\", "
-            + "\"isQualifier\":true}]}";
+            + "\"isQualifier\":true},"
+            + "{\"name\":\"field3\",\"srcType\":\"INTEGER\", \"destName\":\"field_3\", \"destType\":\"STRING\", "
+            + "\"isQualifier\":true, \"isColumnValue\":true, "
+            + "\"columnField\":{\"name\":\"columnField\",\"srcType\":\"INTEGER\", "
+            + "\"destName\":\"column_field\", \"destType\":\"STRING\"}}]}";
 
     final BigTableGrammarParser parser = new BigTableGrammarParser();
     final BigTableGrammar grammar = parser.getBigTableGrammar(grammarRepr);
@@ -34,7 +38,8 @@ public class JsonListMutationTransformerTest {
         DoFnTester.of(transformer);
 
     final String jsonObjStr =
-        "{\"rowkey\":\"rowKeyValue\", \"field1\":42, \"field2\": \"qualifier\"}";
+        "{\"rowkey\":\"rowKeyValue\", \"field1\":42, \"field2\": \"qualifier\", "
+            + "\"field3\":13, \"columnField\":666}";
 
     final List<KV<ByteString, Iterable<Mutation>>> mutations = tester.processBundle(jsonObjStr);
 
@@ -47,6 +52,10 @@ public class JsonListMutationTransformerTest {
         case "field_2":
           Assert.assertEquals("qualifier",
               mutation.getSetCell().getColumnQualifier().toStringUtf8());
+          break;
+        case "field_3":
+          Assert.assertEquals("13", mutation.getSetCell().getColumnQualifier().toStringUtf8());
+          Assert.assertEquals("666", mutation.getSetCell().getValue().toStringUtf8());
           break;
         default:
           fail();
