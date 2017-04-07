@@ -6,8 +6,6 @@ import org.apache.beam.sdk.repackaged.com.google.common.base.Preconditions;
 
 import java.util.List;
 
-import bigflexjson.bigquery.grammar.BigQueryField;
-import bigflexjson.bigquery.grammar.BigQueryGrammar;
 import bigflexjson.grammar.GrammarParser;
 
 public class JsonLdGrammarParser extends GrammarParser {

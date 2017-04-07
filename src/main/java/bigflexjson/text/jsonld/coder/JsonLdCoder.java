@@ -1,7 +1,9 @@
 package bigflexjson.text.jsonld.coder;
 
-import com.wizzardo.tools.json.JsonItem;
 import com.wizzardo.tools.json.JsonObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import bigflexjson.text.jsonld.grammar.JsonLdField;
 import bigflexjson.text.jsonld.grammar.JsonLdGrammar;
@@ -15,9 +17,9 @@ public class JsonLdCoder {
     this.grammar = grammar;
   }
 
-  public JsonObject decode(JsonObject object) {
+  public Map<String, Object> decode(JsonObject object) {
 
-    JsonObject decodedObj = new JsonObject();
+    Map<String, Object> decodedObj = new HashMap<>();
 
     for (JsonLdField field : grammar.getFields()) {
 
@@ -26,6 +28,7 @@ public class JsonLdCoder {
         case "STRING":
           fromStringType(field, object, decodedObj);
           break;
+
         default:
           throw new IllegalStateException(
               field.getSrcType() + " is not supported as a source type");
@@ -35,7 +38,8 @@ public class JsonLdCoder {
     return decodedObj;
   }
 
-  private void fromStringType(JsonLdField field, JsonObject inputObject, JsonObject decodedObj) {
+  private void fromStringType(JsonLdField field, JsonObject inputObject,
+                              Map<String, Object> decodedObj) {
 
     String value;
 
@@ -51,14 +55,17 @@ public class JsonLdCoder {
     }
     switch (field.getDestType()) {
       case "INTEGER":
-        decodedObj.put(field.getDestName(), new JsonItem(Integer.valueOf(value)));
+        decodedObj.put(field.getDestName(), Long.valueOf(value));
         break;
+
       case "FLOAT":
-        decodedObj.put(field.getDestName(), new JsonItem(Double.valueOf(value)));
+        decodedObj.put(field.getDestName(), Double.valueOf(value));
         break;
+
       case "STRING":
-        decodedObj.put(field.getDestName(), new JsonItem(value));
+        decodedObj.put(field.getDestName(), value);
         break;
+
       default:
         throw new IllegalStateException(
             field.getDestType() + " cannot be type casted from INTEGER");

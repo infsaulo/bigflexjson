@@ -1,10 +1,11 @@
 package bigflexjson.text.jsonld.coder;
 
-import com.wizzardo.tools.json.JsonObject;
 import com.wizzardo.tools.json.JsonTools;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Map;
 
 import bigflexjson.text.jsonld.grammar.JsonLdGrammar;
 import bigflexjson.text.jsonld.grammar.JsonLdGrammarParser;
@@ -91,12 +92,12 @@ public class JsonLdCoderTest {
     JsonLdGrammar grammar = grammarParser.getJsonLdGrammar(jsonLdGrammarStr);
 
     JsonLdCoder coder = new JsonLdCoder(grammar);
-    JsonObject decodedJson = coder.decode(JsonTools.parse(txJsonLd).asJsonObject());
+    Map<String, Object> decodedJson = coder.decode(JsonTools.parse(txJsonLd).asJsonObject());
 
     Assert.assertEquals("02e6df5d45801108e65a18fb688f827dac301945eb266219de245157279a4253",
-                        decodedJson.getAsString("hash"));
-    Assert.assertTrue(1L == decodedJson.getAsLong("index"));
+                        decodedJson.get("hash"));
+    Assert.assertTrue(1L == (long) decodedJson.get("index"));
     Assert.assertEquals("0x6621c106003430a1b791ab44fd5a4d872f530a3f",
-                        decodedJson.getAsString("from"));
+                        decodedJson.get("from"));
   }
 }
