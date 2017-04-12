@@ -4,11 +4,15 @@ import com.wizzardo.tools.json.JsonObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import bigflexjson.text.jsonld.grammar.JsonLdField;
 import bigflexjson.text.jsonld.grammar.JsonLdGrammar;
 
 public class JsonLdCoder {
+
+  private static final Logger LOGGER = Logger.getLogger(JsonLdCoder.class.getName());
 
   private final JsonLdGrammar grammar;
 
@@ -43,32 +47,39 @@ public class JsonLdCoder {
 
     String value;
 
-    if (field.getSrcValue().equals("@value")) {
+    try {
 
-      value =
-          inputObject.getAsJsonArray(field.getName()).get(0).asJsonObject().getAsString("@value");
-    } else {
+      if (field.getSrcValue().equals("@value")) {
 
-      value =
-          inputObject.getAsJsonArray(field.getName()).get(0).asJsonObject().getAsString("@id")
-              .split(field.getDelimiter())[1];
-    }
-    switch (field.getDestType()) {
-      case "INTEGER":
-        decodedObj.put(field.getDestName(), Long.valueOf(value));
-        break;
+        value =
+            inputObject.getAsJsonArray(field.getName()).get(0).asJsonObject().getAsString("@value");
+      } else {
 
-      case "FLOAT":
-        decodedObj.put(field.getDestName(), Double.valueOf(value));
-        break;
+        value =
+            inputObject.getAsJsonArray(field.getName()).get(0).asJsonObject().getAsString("@id")
+                .split(field.getDelimiter())[1];
+      }
 
-      case "STRING":
-        decodedObj.put(field.getDestName(), value);
-        break;
+      switch (field.getDestType()) {
+        case "INTEGER":
+          decodedObj.put(field.getDestName(), Long.valueOf(value));
+          break;
 
-      default:
-        throw new IllegalStateException(
-            field.getDestType() + " cannot be type casted from INTEGER");
+        case "FLOAT":
+          decodedObj.put(field.getDestName(), Double.valueOf(value));
+          break;
+
+        case "STRING":
+          decodedObj.put(field.getDestName(), value);
+          break;
+
+        default:
+          throw new IllegalStateException(
+              field.getDestType() + " cannot be type casted from INTEGER");
+      }
+    } catch (NullPointerException e) {
+
+      LOGGER.log(Level.SEVERE, e.toString(), e);
     }
   }
 }
