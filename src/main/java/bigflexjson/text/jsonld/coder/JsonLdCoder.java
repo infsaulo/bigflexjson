@@ -79,7 +79,9 @@ public class JsonLdCoder {
       }
     } catch (NullPointerException e) {
 
-      LOGGER.log(Level.SEVERE, e.toString(), e);
+      LOGGER.log(Level.SEVERE,
+                 "Error with field " + field.getSrcValue() + " and object " + inputObject
+                     .toString(), e);
     }
   }
 }
