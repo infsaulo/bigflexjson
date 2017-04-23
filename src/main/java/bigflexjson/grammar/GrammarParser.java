@@ -92,6 +92,8 @@ public class GrammarParser {
         break;
       case "TIMESTAMP":
         break;
+      case "BOOLEAN":
+        break;
       default:
         throw new IllegalStateException(field.getDestType() + " cannot be type casted from STRING");
     }
