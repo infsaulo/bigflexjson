@@ -73,6 +73,10 @@ public class JsonLdCoder {
           decodedObj.put(field.getDestName(), value);
           break;
 
+        case "BOOLEAN":
+          decodedObj.put(field.getDestName(), Boolean.valueOf(value));
+          break;
+
         default:
           throw new IllegalStateException(
               field.getDestType() + " cannot be type casted from INTEGER");
@@ -82,6 +86,8 @@ public class JsonLdCoder {
       LOGGER.log(Level.SEVERE,
                  "Error with field " + field.getName() + " and object " + inputObject
                      .toString(), e);
+
+      decodedObj.put(field.getDestName(), null);
     }
   }
 }
